@@ -151,8 +151,8 @@ export const usePokedexStore = defineStore('pokedex', {
     },
     pokemonPrimaryDefenseVector() {
       if (!this.selectedPokemon.stats) return null
-      // Check if DEF > SPD
-      return this.selectedPokemon.stats[2].base_stat > this.selectedPokemon.stats[4].base_stat ? "physical" : "special"
+      // Check if DEF < SPD
+      return this.selectedPokemon.stats[2].base_stat < this.selectedPokemon.stats[4].base_stat ? "physical" : "special"
     },
     overlappedTyping() {
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
