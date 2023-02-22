@@ -18,10 +18,10 @@ pokedex.getPokemonSpeciesList()
           <div className="lg:order-first lg:row-span-2 px-2 my-8 md:px-8">
             <div class="wrapper px-4">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Not sure what Pokémon to bring to your next Tera Raid? Here's a hint!
+                Not sure how to prep for your next Tera Raid? Here's a hint!
               </h1>
             </div>
-            <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400 bg-gray-900 rounded-xl shadow-lg p-8 w-full">
+            <div className="mt-6 space-y-8 text-base text-zinc-600 dark:text-zinc-400 bg-gray-900 rounded-xl shadow-lg p-8 w-full">
               <Picker />
               <div id="star-level-picker" class="mb-4 block">
                 <label class="block label">Star Level of Raid: <span class="font-mono text-sm text-gray-400">({{ pokedex.selectedStarLevel }} Stars, Level {{ pokedex.pokemonLevel }})</span></label>
@@ -38,7 +38,7 @@ pokedex.getPokemonSpeciesList()
                   </div>
                 </div>
               </div>
-              <div id="tera-type-picker">
+              <div id="tera-type-picker" class="mb-8">
                 <label class="block label">Tera Type:</label>
                 <div class="grid gap-4 sm:grid-cols-6 grid-cols-5 grid-rows-3">
                   <div v-for="type in pokedex.types" :key="type.name">
@@ -51,9 +51,17 @@ pokedex.getPokemonSpeciesList()
                   </div>
                 </div>
               </div>
+              <div class="mt-8">
+                <button 
+                  type="button" 
+                  @click="pokedex.setNewPokemon()"
+                  class="flex items-center rounded-md border border-transparent bg-violet-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2">
+                  Gimme some strategery
+                </button>
+              </div>
             </div>
           </div>
-          <div id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
+          <div v-if="pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
             <div id="selected-pokemon" class="w-full py-6 pb-8 relative flex flex-col bg-gray-900 rounded-lg shadow-lg" v-if="pokedex.selectedPokemon">
               <div class="sm:pl-48 pl-32">
                 <h2 class="font-sans text-white text-2xl font-bold">{{ voca(pokedex.selectedPokemon.name).capitalize() }}</h2>

@@ -8,7 +8,7 @@ const P = new Pokedex.Pokedex()
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
     pokemon: [],
-    query: 'meowscarada',
+    query: 'charizard',
     selectedPokemon: {},
     selectedTeraType: false,
     selectedStarLevel: 5,
@@ -29,6 +29,7 @@ export const usePokedexStore = defineStore('pokedex', {
       { stars: 6, level: "90" },
       { stars: 7, level: "100" },
     ],
+    loaded: true,
     types: [
       {
           "name": "normal",
@@ -125,15 +126,6 @@ export const usePokedexStore = defineStore('pokedex', {
   getters: {
     filteredPokemon() {
       const results = this.pokemon.filter((pokemon) => pokemon.name.includes(this.query))
-
-      if (results.length === 1) {
-        const poke = results[0]
-        console.log('only oneeee', poke)
-        this.setSelectedPokemon(poke.name)
-      } else if (results.length > 20) {
-        return results.slice(0,30)
-      }
-
       return results
     },
     pokemonLevel() {
@@ -204,6 +196,18 @@ export const usePokedexStore = defineStore('pokedex', {
     }
   },
   actions: {
+    setNewPokemon() {
+      console.log('set new poke')
+      this.loaded = false
+
+      if (this.filteredPokemon.length === 1) {
+        const poke = this.filteredPokemon[0]
+        console.log('only oneeee', poke)
+        this.setSelectedPokemon(poke.name)
+      } else if (results.length > 20) {
+        return results.slice(0,30)
+      }
+    },
     async getPokemonSpeciesList() {
       const species = await P.getPokemonSpeciesList()
       this.pokemon = species.results
@@ -218,6 +222,7 @@ export const usePokedexStore = defineStore('pokedex', {
       this.selectedPokemon = poke
       this.getDefenseSuperEffectiveTypes(poke.types)
       this.formatMoveset(poke.moves)
+      this.loaded = true
     },
     setNewQuery(query) {
       this.query = query
@@ -285,7 +290,24 @@ export const usePokedexStore = defineStore('pokedex', {
           .pluck('damage_relations')
           .pluck('half_damage_to')
           .flatten()
-          .toArray()
+          .uniq('name')
+          // .filter(async (t) => { 
+          //   // for each type
+          //   // find the types that are supereffective against it
+          //   console.log('type', t)
+          //   const super_effective = await P.getTypeByName(t)
+          //   // check to see if that array includes this type
+          //   console.log('supaeffective', super_effective)
+          //   // if yes, reject
+
+          //   // const { super_effective } = t
+          //   // const recommendedTypes = Lazy(this.overlappedTyping)
+          //   //   .map((t) => { return t.name })
+          //   //   .toArray()
+            
+          //   return t
+          //   // return super_effective.some( r => recommendedTypes.includes(r) )
+          // })
 
         superEffective = Lazy(flatterArray)
           .map((value) => {
