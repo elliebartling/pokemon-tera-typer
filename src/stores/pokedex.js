@@ -8,7 +8,7 @@ const P = new Pokedex.Pokedex()
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
     pokemon: [],
-    query: 'meowscarada',
+    query: 'fletchinder',
     selectedPokemon: {},
     selectedTeraType: false,
     selectedStarLevel: 5,
@@ -296,20 +296,6 @@ export const usePokedexStore = defineStore('pokedex', {
       this.selectedPokemonMoveset = movesWithTypes
     },
     async getDefenseSuperEffectiveTypes(types) {
-      let superEffective
-
-      const typePromiseArray = await Lazy(types)
-        .map(async (type) => {
-          return await P.getTypeByName(type.type.name)
-        })
-        .toArray()
-
-      Promise.all(typePromiseArray).then((values) => {
-        const flatterArray = Lazy(values)
-          .pluck('damage_relations')
-          .pluck('half_damage_to')
-          .flatten()
-          .uniq('name')
           // .filter(async (t) => { 
           //   // for each type
           //   // find the types that are supereffective against it
@@ -328,23 +314,64 @@ export const usePokedexStore = defineStore('pokedex', {
           //   // return super_effective.some( r => recommendedTypes.includes(r) )
           // })
 
-        superEffective = Lazy(flatterArray)
-          .map((value) => {
-            const damageLevel = Lazy(flatterArray)            
-              .filter((v) => { 
-                return value.name === v.name 
-              })
-              .toArray()
-              .length
-            
-            value['damage'] = damageLevel * 2
-            return value
-          })
+
+      let superEffective
+
+      const typePromiseArray = await Lazy(types)
+        .map(async (type) => {
+          return await P.getTypeByName(type.type.name)
+        })
+        .toArray()
+
+      Promise.all(typePromiseArray).then((values) => {
+        console.log('values', values)
+
+        // Get basic info: what does this type do half + no damage to?
+        const no_damage_to = Lazy(values)
+          .pluck('damage_relations')
+          .pluck('no_damage_to')
+          .flatten()
           .uniq('name')
           .toArray()
-        
+
+        const half_damage_to = Lazy(values)
+          .pluck('damage_relations')
+          .pluck('half_damage_to')
+          .flatten()
+          .uniq('name')
+          .toArray()
+
+        // Now, check for double typing conflicts:
+        // If this type does double damage to a type that's resisted by
+        // the other type, that's not good defensive typing
+        const double_damage_to = Lazy(values)
+          .pluck('damage_relations')
+          .pluck('double_damage_to')
+          .flatten()
+          .uniq('name')
+          .toArray()
+
+        // const no_damage_from = Lazy(values)
+        //   .pluck('damage_relations')
+        //   .pluck('no_damage_from')
+        //   .flatten()
+        //   .uniq('name')
+        //   .toArray()
+
+        console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
+        superEffective = Lazy(half_damage_to)
+          .concat(no_damage_to)
+          .uniq('name')
+          .reject((val) => {
+            const isOverlapped = Lazy(double_damage_to).findWhere({ name: val.name })
+            return isOverlapped != undefined 
+          })
+          .toArray()
         this.selectedPokemonDamageRelations.defense = superEffective
       })
+    },
+    async getNeutralDefensiveTyping(types) {
+
     },
     async getSuperEffectiveAgainst(type) {
       const typeInfo = await P.getTypeByName(type)

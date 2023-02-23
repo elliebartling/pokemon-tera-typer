@@ -64,7 +64,7 @@ pokedex.getTypes()
           </div>
           <div v-if="pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
             <div id="selected-pokemon" class="w-full py-6 pb-8 relative flex flex-col bg-gray-900 rounded-lg shadow-lg" v-if="pokedex.selectedPokemon">
-              <div class="sm:pl-48 pl-32">
+              <div class="sm:pl-48 pl-36">
                 <h2 class="font-sans text-white text-2xl font-bold">{{ voca(pokedex.selectedPokemon.name).capitalize() }}</h2>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-4">
                   <p class="label mr-6 text-gray-400">Level {{ pokedex.pokemonLevel }}</p>
@@ -77,7 +77,7 @@ pokedex.getTypes()
                     </div>
                 </div>
               </div>
-              <div class="w-32 sm:w-48 -left-32 sm:-left-36 -top-12 absolute">
+              <div class="w-32 sm:w-48 -left-28 sm:-left-36 -top-8 absolute">
                 <img 
                     v-if="pokedex.selectedPokemon.sprites"
                     :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
