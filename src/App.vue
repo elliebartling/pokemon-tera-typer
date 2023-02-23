@@ -10,6 +10,7 @@ import Move from './components/Move.vue'
 import { usePokedexStore } from './stores/pokedex'
 const pokedex = usePokedexStore()
 pokedex.getPokemonSpeciesList()
+pokedex.getTypes()
 </script>
 
 <template>

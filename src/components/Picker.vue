@@ -29,9 +29,9 @@ const debounce = (func, wait) => {
 };
 
 const getSpriteUrl = (pokemon) => {
-  const dexNumber = pokemon.url.split('/').reverse()[1]
-  console.log(dexNumber)
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexNumber}.png`
+  // const dexNumber = pokemon.url.split('/').reverse()[1]
+  // console.log(dexNumber)
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
 }
 
 </script>

@@ -8,7 +8,7 @@ const P = new Pokedex.Pokedex()
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
     pokemon: [],
-    query: 'charizard',
+    query: 'meowscarada',
     selectedPokemon: {},
     selectedTeraType: false,
     selectedStarLevel: 5,
@@ -29,103 +29,33 @@ export const usePokedexStore = defineStore('pokedex', {
       { stars: 6, level: "90" },
       { stars: 7, level: "100" },
     ],
-    loaded: true,
-    types: [
-      {
-          "name": "normal",
-          "url": "/api/v2/type/1/",
-          "color": "zinc-400"
+    loaded: false,
+    typeColors: {
+          "normal": "zinc-400",
+          "fighting": "orange-700",
+          "flying": "sky-500",
+          "poison": "violet-700",
+          "ground": "yellow-900",
+          "rock": "zinc-600",
+          "bug": "lime-600",
+          "ghost": "violet-900",
+          "steel": "slate-600",
+          "fire": "red-600",
+          "water": "blue-600",
+          "grass": "emerald-600",
+          "electric": "yellow-500",
+          "psychic": "pink-500",
+          "ice": "cyan-400",
+          "dragon": "sky-700",
+          "dark": "slate-700",
+          "fairy": "rose-400",
       },
-      {
-          "name": "fighting",
-          "url": "/api/v2/type/2/",
-          "color": "orange-700"
-      },
-      {
-          "name": "flying",
-          "url": "/api/v2/type/3/",
-          "color": "sky-500"
-      },
-      {
-          "name": "poison",
-          "url": "/api/v2/type/4/",
-          "color": "violet-700"
-      },
-      {
-          "name": "ground",
-          "url": "/api/v2/type/5/",
-          "color": "yellow-900"
-      },
-      {
-          "name": "rock",
-          "url": "/api/v2/type/6/",
-          "color": "zinc-600"
-      },
-      {
-          "name": "bug",
-          "url": "/api/v2/type/7/",
-          "color": "lime-600"
-      },
-      {
-          "name": "ghost",
-          "url": "/api/v2/type/8/",
-          "color": "violet-900"
-      },
-      {
-          "name": "steel",
-          "url": "/api/v2/type/9/",
-          "color": "slate-600"
-      },
-      {
-          "name": "fire",
-          "url": "/api/v2/type/10/",
-          "color": "red-600"
-      },
-      {
-          "name": "water",
-          "url": "/api/v2/type/11/",
-          "color": "blue-600"
-      },
-      {
-          "name": "grass",
-          "url": "/api/v2/type/12/",
-          "color": "emerald-600"
-      },
-      {
-          "name": "electric",
-          "url": "/api/v2/type/13/",
-          "color": "yellow-500"
-      },
-      {
-          "name": "psychic",
-          "url": "/api/v2/type/14/",
-          "color": "pink-500"
-      },
-      {
-          "name": "ice",
-          "url": "/api/v2/type/15/",
-          "color": "cyan-400"
-      },
-      {
-          "name": "dragon",
-          "url": "/api/v2/type/16/",
-          "color": "sky-700"
-      },
-      {
-          "name": "dark",
-          "url": "/api/v2/type/17/",
-          "color": "slate-700"
-      },
-      {
-          "name": "fairy",
-          "url": "/api/v2/type/18/",
-          "color": "rose-400"
-      }
-  ]
+      types: []
   }),
   getters: {
     filteredPokemon() {
-      const results = this.pokemon.filter((pokemon) => pokemon.name.includes(this.query))
+      const results = this.pokemon ? this.pokemon.filter((pokemon) => pokemon.name.includes(this.query)).slice(0,40) : null
+      if (results.length == 1) { this.setSelectedPokemon(results[0].name) }
       return results
     },
     pokemonLevel() {
@@ -139,12 +69,16 @@ export const usePokedexStore = defineStore('pokedex', {
     pokemonPrimaryAttackVector() {
       if (!this.selectedPokemon.stats) return null
       // Check if ATK > SPA
-      return this.selectedPokemon.stats[1].base_stat > this.selectedPokemon.stats[3].base_stat ? "physical" : "special"
+      const ATK = this.selectedPokemon.stats[1].base_stat
+      const SPA = this.selectedPokemon.stats[3].base_stat
+      if (ATK > SPA) { return 'physical' } else if (ATK < SPA) { return 'special' } else { return 'either' }
     },
     pokemonPrimaryDefenseVector() {
       if (!this.selectedPokemon.stats) return null
       // Check if DEF < SPD
-      return this.selectedPokemon.stats[2].base_stat < this.selectedPokemon.stats[4].base_stat ? "physical" : "special"
+      const DEF = this.selectedPokemon.stats[2].base_stat
+      const SPD = this.selectedPokemon.stats[4].base_stat
+      if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
     overlappedTyping() {
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
@@ -155,7 +89,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .uniq('name')
         .toArray()
 
-      console.log('combotypes', comboTypes)
+      // console.log('combotypes', comboTypes)
       return comboTypes
     },
     watchOutMoves() {
@@ -165,7 +99,7 @@ export const usePokedexStore = defineStore('pokedex', {
       const selectedPokemonTypes = Lazy(this.selectedPokemon)
         .get('types')
         .map((t, i) => { 
-          console.log("t", t)
+          // console.log("t", t)
           return t && t.type ? t.type.name : null 
         })
       
@@ -196,21 +130,106 @@ export const usePokedexStore = defineStore('pokedex', {
     }
   },
   actions: {
+    getTypes() {
+      console.log('getting types')
+      fetch('https://beta.pokeapi.co/graphql/v1beta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query samplePokeAPIquery {
+            types: pokemon_v2_type {
+              name
+              id
+              pokemon_v2_typeefficacies {
+                damage_factor
+                target_type: pokemonV2TypeByTargetTypeId {
+                  name
+                }
+              }
+            }
+          }`
+        })
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        const {types} = result.data
+        const typesWithData = Lazy(types)
+          .map((t) => {
+            let strength
+            const efficiencies = Lazy(t.pokemon_v2_typeefficacies)
+              .map((f) => {
+                f['target_type'] = f['target_type'].name
+                return f
+              })
+              .groupBy('damage_factor')
+              .toObject()
+            
+            Lazy(efficiencies)
+              .keys()
+              .each((g, i) => {
+                // console.log('g', g, i, efficiencies[i], efficiencies[g])
+
+                const new_factors = efficiencies[g].map((i) => { 
+                  // console.log('i', i)
+                  return i.target_type 
+                })
+
+                efficiencies[g] = new_factors
+
+                // g is an array of damage factors, with redundant damage_factor data
+                // g = [{ damage_factor : 50, target_type: rock }, { damage_factor : 50, target_type: steel }]
+                // for each group of damage factors
+                // iterate over each individual factor
+                // and return just the target type so that g = ['rock', 'steel']
+                // { damage_vs: { 50: [arr], 100: [arr], 200: [arr] } }
+              })
+              
+            t['color'] = this.typeColors[t.name]
+            t['damage_vs'] = efficiencies
+            return t
+          })
+          .reject((t) => t.name === 'shadow' || t.name === 'unknown' )
+          .toArray()
+          this.types = typesWithData
+        // console.log(typesWithData)
+      })
+    },
     setNewPokemon() {
       console.log('set new poke')
-      this.loaded = false
+      // this.loaded = false
 
       if (this.filteredPokemon.length === 1) {
         const poke = this.filteredPokemon[0]
-        console.log('only oneeee', poke)
         this.setSelectedPokemon(poke.name)
       } else if (results.length > 20) {
         return results.slice(0,30)
       }
     },
     async getPokemonSpeciesList() {
-      const species = await P.getPokemonSpeciesList()
-      this.pokemon = species.results
+      // const species = await P.getPokemonSpeciesList()
+      const new_species = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query samplePokeAPIquery {
+            pokemon: pokemon_v2_pokemonspecies(where: {pokemon_v2_pokemondexnumbers: {pokemon_v2_pokedex: {name: {_eq: "paldea"}}}}) {
+              name
+              id
+            }
+          }
+          `
+        })
+      })
+      .then((res) => res.json())
+      .then((result) => { 
+        console.log(result) 
+        this.pokemon = result.data.pokemon
+      })
+      // this.pokemon = species.results
     },
     async getPokemonByName(query) {
       const poke = await P.getPokemonByName(query)
