@@ -45,7 +45,7 @@ const getSpriteUrl = (pokemon) => {
           <ComboboxInput 
             class="w-full rounded-md border text-white border-gray-600 bg-gray-700 py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm" 
             @change="pokedex.setNewQuery($event.target.value)"
-            :displayValue="(poke) => poke"
+            :displayValue="(poke) => voca(poke).capitalize()"
           />
           <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
             <ChevronUpDownIcon class="h-5 w-5 text-white" aria-hidden="true" />
@@ -62,7 +62,7 @@ const getSpriteUrl = (pokemon) => {
                   <div class="flex items-center">
                     <img :src="getSpriteUrl(poke)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
                     <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                      {{ poke.name }}
+                      {{ voca(poke.name).capitalize() }}
                     </span>
                   </div>
 

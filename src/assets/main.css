@@ -5,3 +5,7 @@
 .label {
     @apply font-mono mb-2 text-sm;
 }
+
+.card {
+    @apply bg-gray-900 rounded-3xl p-6 shadow-lg;
+}

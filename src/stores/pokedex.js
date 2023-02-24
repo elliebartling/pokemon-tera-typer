@@ -1,8 +1,9 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import Lazy from "lazy.js"
-
+import voca from 'voca'
 import * as Pokedex from 'pokeapi-js-wrapper'
+
 const P = new Pokedex.Pokedex()
 
 export const usePokedexStore = defineStore('pokedex', {
@@ -50,13 +51,20 @@ export const usePokedexStore = defineStore('pokedex', {
           "dark": "slate-700",
           "fairy": "rose-400",
       },
-      types: []
+    types: []
   }),
   getters: {
     filteredPokemon() {
-      const results = this.pokemon ? this.pokemon.filter((pokemon) => pokemon.name.includes(this.query)).slice(0,40) : null
-      if (results.length == 1) { this.setSelectedPokemon(results[0].name) }
-      return results
+      if (!this.pokemon) return []
+
+      const q = voca(this.query).lowerCase()
+      const list = Lazy(this.pokemon)
+        .filter((pokemon) => { return pokemon.name.includes(q) })
+        .toArray()
+        // .slice(0,30)
+
+      if (list.length == 1) { this.setSelectedPokemon(list[0].name) }
+      return list
     },
     pokemonLevel() {
       return this.starRatings[this.selectedStarLevel - 1].level
@@ -296,24 +304,6 @@ export const usePokedexStore = defineStore('pokedex', {
       this.selectedPokemonMoveset = movesWithTypes
     },
     async getDefenseSuperEffectiveTypes(types) {
-          // .filter(async (t) => { 
-          //   // for each type
-          //   // find the types that are supereffective against it
-          //   console.log('type', t)
-          //   const super_effective = await P.getTypeByName(t)
-          //   // check to see if that array includes this type
-          //   console.log('supaeffective', super_effective)
-          //   // if yes, reject
-
-          //   // const { super_effective } = t
-          //   // const recommendedTypes = Lazy(this.overlappedTyping)
-          //   //   .map((t) => { return t.name })
-          //   //   .toArray()
-            
-          //   return t
-          //   // return super_effective.some( r => recommendedTypes.includes(r) )
-          // })
-
 
       let superEffective
 
@@ -351,13 +341,6 @@ export const usePokedexStore = defineStore('pokedex', {
           .uniq('name')
           .toArray()
 
-        // const no_damage_from = Lazy(values)
-        //   .pluck('damage_relations')
-        //   .pluck('no_damage_from')
-        //   .flatten()
-        //   .uniq('name')
-        //   .toArray()
-
         console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
         superEffective = Lazy(half_damage_to)
           .concat(no_damage_to)
@@ -367,6 +350,7 @@ export const usePokedexStore = defineStore('pokedex', {
             return isOverlapped != undefined 
           })
           .toArray()
+
         this.selectedPokemonDamageRelations.defense = superEffective
       })
     },
