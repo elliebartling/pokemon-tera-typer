@@ -9,6 +9,7 @@ import Type from './components/Type.vue'
 import Move from './components/Move.vue'
 import Header from './components/Header.vue'
 import { usePokedexStore } from './stores/pokedex'
+import MoveList from './components/MoveList.vue'
 const pokedex = usePokedexStore()
 pokedex.getPokemonSpeciesList()
 pokedex.getTypes()
@@ -118,79 +119,22 @@ pokedex.getTypes()
                   <p v-else class="label text-gray-500">No overlaps :(</p>
                 </div>
               </div>
-              <div id="watch-out" class="flex flex-col items-start mt-3">
+              <div v-if="pokedex.watchOutMoves && pokedex.watchOutMoves.length > 0" id="watch-out" class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">But watch out for moves like...</p>
-                <div class="bg-black bg-opacity-20 rounded-xl w-full px-4 md:px-4 pb-3 -ml-8 relative" style="width: calc(100% + 4rem)">
-                  <div class="flex flex-col w-full">
-                    <div class="flex flex-row w-full text-white font-mono text-xs px-4 py-4 rounded-t-lg">
-                      <div class="w-1/3">Name</div>
-                      <div class="w-1/6">Type</div>
-                      <div class="w-20">Damage</div>
-                      <div class="">2x effective vs.</div>
-                    </div>
-                    <Move 
-                      v-for="move in pokedex.watchOutMoves"
-                      class="mr-2 mb-2"
-                      :key="move.name"
-                      :move="move" />
-                    </div>
-                </div>
+                <MoveList :list="pokedex.watchOutMoves" :showLevel="false" />
               </div>
             </div>
             <div id="all-moves" class="card px-8">
               <h2 class="text-2xl font-bold text-white mb-2">All of {{voca(pokedex.selectedPokemon.name).capitalize()}}'s moves</h2>
               <div class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">By level</p>
-                <div class="bg-black bg-opacity-20 rounded-xl w-full px-4 md:px-4 pb-3 -ml-8 relative" style="width: calc(100% + 4rem)">
-                  <div class="flex flex-col w-full">
-                    <div class="flex flex-row w-full text-white font-mono text-xs px-4 py-4 rounded-t-lg">
-                      <div class="w-1/3">Name</div>
-                      <div class="w-1/6">Type</div>
-                      <div class="w-20">Damage</div>
-                      <div class="">2x effective vs.</div>
-                    </div>
-                    <Move 
-                      v-for="move in pokedex.selectedPokemonMoveset['level-up']"
-                      class="mr-2 mb-2"
-                      :showLevel="true"
-                      :key="move.name"
-                      :move="move" />
-                    </div>
-                </div>
+                <MoveList :list="pokedex.selectedPokemonMoveset['level-up']" :showLevel="true" />
+
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">Egg Moves</p>
-                <div class="bg-black bg-opacity-20 rounded-xl w-full px-4 md:px-4 pb-3 -ml-8 relative" style="width: calc(100% + 4rem)">
-                  <div class="flex flex-col w-full">
-                    <div class="flex flex-row w-full text-white font-mono text-xs px-4 py-4 rounded-t-lg">
-                      <div class="w-1/3">Name</div>
-                      <div class="w-1/6">Type</div>
-                      <div class="w-20">Damage</div>
-                      <div class="">2x effective vs.</div>
-                    </div>
-                    <Move 
-                      v-for="move in pokedex.selectedPokemonMoveset['egg']"
-                      class="mr-2 mb-2"
-                      :showLevel="false"
-                      :key="move.name"
-                      :move="move" />
-                    </div>
-                </div>
+                <MoveList :list="pokedex.selectedPokemonMoveset['egg']" :showLevel="false" />
+                
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">By TM</p>
-                <div class="bg-black bg-opacity-20 rounded-xl w-full px-4 md:px-4 pb-3 -ml-8 relative" style="width: calc(100% + 4rem)">
-                  <div class="flex flex-col w-full">
-                    <div class="flex flex-row w-full text-white font-mono text-xs px-4 py-4 rounded-t-lg">
-                      <div class="w-1/3">Name</div>
-                      <div class="w-1/6">Type</div>
-                      <div class="w-20">Damage</div>
-                      <div class="">2x effective vs.</div>
-                    </div>
-                    <Move 
-                      v-for="move in pokedex.selectedPokemonMoveset['machine']"
-                      class="mr-2 mb-2"
-                      :showLevel="false"
-                      :key="move.name"
-                      :move="move" />
-                    </div>
-                </div>
+                <MoveList :list="pokedex.selectedPokemonMoveset['machine']" :showLevel="false" />
               </div>
             </div>
           </div>
