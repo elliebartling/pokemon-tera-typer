@@ -137,7 +137,7 @@ const capitalize = function(text) {
               </div>
               <div v-if="pokedex.watchOutMoves && pokedex.watchOutMoves.length > 0" id="watch-out" class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">But watch out for moves like...</p>
-                <MoveList :list="pokedex.watchOutMoves" :showLevel="false" />
+                <MoveList :list="pokedex.watchOutMoves" :showLevel="false" :filterEffectiveBy="pokedex.allOverlappedTyping" />
               </div>
             </div>
             <div v-if="pokedex.loaded" id="all-moves" class="card px-8">

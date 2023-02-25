@@ -3,7 +3,8 @@ import Move from './Move.vue'
 
 const props = defineProps({
     list: Array,
-    showLevel: Boolean
+    showLevel: Boolean,
+    filterEffectiveBy: Array
 })
 </script>
 
@@ -21,6 +22,7 @@ const props = defineProps({
             class="mr-2 mb-2"
             :showLevel="showLevel"
             :key="move.name"
+            :filterEffectiveBy="filterEffectiveBy"
             :move="move" />
           </div>
       </div>

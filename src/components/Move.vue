@@ -1,20 +1,35 @@
-<script setup>
+<script>
 import { usePokedexStore } from '../stores/pokedex'
 import voca from 'voca'
 import Type from './Type.vue'
 import Thing from './Thing.vue'
+import Lazy from 'lazy.js'
+import { mapStores } from 'pinia'
 
-
-const pokedex = usePokedexStore()
-const props = defineProps({
-    move: Object,
-    showLevel: Boolean
-})
-
-const deslug = function (text) {
-    return voca(text).replaceAll('-', ' ').titleCase()
+export default {
+    props: ['move', 'showLevel', 'filterEffectiveBy'],
+    components: { Thing, Type },
+    computed: {
+        ...mapStores(usePokedexStore),
+        filteredTypes() {
+            if (!this.filterEffectiveBy) return this.move.super_effective
+            if (this.move.super_effective == undefined) return []
+            const super_effective = this.move.super_effective
+            // console.log('filtered types', this.move, super_effective, this.filterEffectiveBy)
+            // Take the existing supereffective types array
+            // Filter out anything that's not also in the FilterEffectiveBy array
+            // Filter each supereffective type by whether it's also in filterEffectiveBy
+            return Lazy(super_effective)
+                .filter((t) => this.filterEffectiveBy.includes(t))
+                .toArray()
+        }
+    },
+    methods: {
+        deslug (text) {
+            return voca(text).replaceAll('-', ' ').titleCase()
+        }
+    }
 }
-
 </script>
 <template>
     <div class="bg-slate-800 rounded-lg px-4 pt-4 pb-2 text-white font-mono text-xs w-full border-collapse mb-2 grid grid-cols-8 items-start">
@@ -28,9 +43,9 @@ const deslug = function (text) {
         <div class="col-span-2">
             <Thing :move="move" />
         </div>
-        <div v-if="move.super_effective.length > 0 && move.damage_class != 'status'" class="rounded-r-lg">
+        <div v-if="filteredTypes.length > 0 && move.damage_class != 'status'" class="rounded-r-lg">
             <span class="block whitespace-nowrap mb-2 mt-1 md:hidden">2x vs.</span>
-            <Type v-for="type in move.super_effective" :type="type" class="mr-2 mb-2" />
+            <Type v-for="type in filteredTypes" :type="type" class="mr-2 mb-2" />
         </div>
     </div>
 </template>

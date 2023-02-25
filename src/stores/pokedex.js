@@ -93,21 +93,29 @@ export const usePokedexStore = defineStore('pokedex', {
       const SPD = this.selectedPokemon.stats[4].base_stat
       if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
-    resistedOverlappedTyping() {
+    allOverlappedTyping() {
       if (!this.loaded) return null
+      return Lazy(this.resistedOverlappedTyping)
+        .concat(this.neutralOverlappedTyping)
+        .map((n) => n.name)
+        .toArray()
+    },
+    resistedOverlappedTyping() {
+      if (!this.loaded || !this.selectedPokemonDamageRelations.defense.resist) return null
       const defensive_types = this.selectedPokemonDamageRelations.defense.resist
+
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
         .concat(defensive_types)
         .groupBy('name')
         .filter(function(v){return v.length > 1})
         .flatten()
-        // .uniq('name')
+        .uniq('name')
         .toArray()
 
-      // console.log('combotypes', comboTypes)
       return comboTypes
     },
     neutralOverlappedTyping() {
+      if (!this.loaded || !this.selectedPokemonDamageRelations.defense.neutral) return null
       const defensive_types = this.selectedPokemonDamageRelations.defense.neutral
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
         .concat(defensive_types)
@@ -117,7 +125,6 @@ export const usePokedexStore = defineStore('pokedex', {
         .uniq('name')
         .toArray()
 
-      // console.log('combotypes', comboTypes)
       return comboTypes
     },
     watchOutMoves() {
