@@ -1,0 +1,16 @@
+query samplePokeAPIquery {
+  pokemon_v2_pokemonmove(where: {pokemon_v2_pokemon: {name: {_eq: "meowscarada"}}}) {
+    level
+    data: pokemon_v2_move {
+      name
+      power
+      type_id
+      damage_class: pokemon_v2_movedamageclass {
+        name
+      }
+    }
+    learn_method: pokemon_v2_movelearnmethod {
+      name
+    }
+  }
+}
