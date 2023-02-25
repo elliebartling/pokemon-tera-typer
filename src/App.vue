@@ -54,7 +54,7 @@ pokedex.setSelectedPokemon(pokedex.query)
                       :type="type.name" />
                   </div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center mt-3">
+                <div class="flex flex-col sm:flex-row items-start mt-3">
                   <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-36 flex-shrink-0 whitespace-nowrap">Neutral typing:</p>
                   <div class="flex flex-row flex-wrap flex-shrink">
                     <Type 
