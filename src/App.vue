@@ -56,7 +56,9 @@ pokedex.setSelectedPokemon(pokedex.query)
                 </div>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center">
                   <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono mt-2 w-36 flex-shrink-0 mt-4">Defense type:</p>
-                  <span class="w-5 font-mono text-white text-sm flex flex-row"><img class="w-6 mr-1" :src="`/icons/${pokedex.pokemonPrimaryAttackVector}.png`" />{{ pokedex.pokemonPrimaryAttackVector }}</span>
+                  <span class="font-mono rounded-md text-white text-xs inline-flex flex-row bg-slate-700 px-2 py-1">
+                    <img class="w-6 mr-1" :src="`/icons/${pokedex.pokemonPrimaryAttackVector}.png`" />{{ pokedex.pokemonPrimaryAttackVector }}
+                  </span>
                 </div>
               </div>
               <h2 class="text-2xl font-bold text-white mb-2 mt-8">Your offense</h2>
@@ -80,9 +82,11 @@ pokedex.setSelectedPokemon(pokedex.query)
                       :type="type.name" />
                   </div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center ">
                   <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono mt-2 w-36 flex-shrink-0 mt-4">Attack type:</p>
-                  <span class="w-5 font-mono text-white text-sm flex flex-row"><img class="w-6 mr-1" :src="`/icons/${pokedex.pokemonPrimaryDefenseVector}.png`" />{{ pokedex.pokemonPrimaryDefenseVector }}</span>
+                  <span class="font-mono rounded-md text-white text-xs inline-flex flex-row bg-slate-700 px-2 py-1">
+                    <img class="w-6 mr-1" :src="`/icons/${pokedex.pokemonPrimaryDefenseVector}.png`" />{{ pokedex.pokemonPrimaryDefenseVector }}
+                  </span>
                 </div>
               </div>
               <h2 class="text-2xl font-bold text-white mb-2 mt-8">Recommended types</h2>
