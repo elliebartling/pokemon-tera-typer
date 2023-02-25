@@ -11,8 +11,8 @@ export const usePokedexStore = defineStore('pokedex', {
     pokemon: [],
     query: 'fletchinder',
     selectedPokemon: {},
-    selectedTeraType: false,
     selectedStarLevel: 5,
+    recentPokemon: [],
     selectedPokemonDamageRelations: {
       // The Tera Pokemon's offensive type
       offense: {},
@@ -31,6 +31,8 @@ export const usePokedexStore = defineStore('pokedex', {
       { stars: 7, level: "100" },
     ],
     loaded: false,
+    showPalette: false,
+    selectedTeraType: false,
     typeColors: {
           "normal": "zinc-400",
           "fighting": "orange-700",
@@ -61,7 +63,7 @@ export const usePokedexStore = defineStore('pokedex', {
       const list = Lazy(this.pokemon)
         .filter((pokemon) => { return pokemon.name.includes(q) })
         .toArray()
-        // .slice(0,30)
+        .slice(0,30)
 
       if (list.length == 1) { this.setSelectedPokemon(list[0].name) }
       return list
@@ -70,19 +72,19 @@ export const usePokedexStore = defineStore('pokedex', {
       return this.starRatings[this.selectedStarLevel - 1].level
     },
     pokemonStats() {
-      return Lazy(this.selectedPokemon.stats)
+      return !this.loaded ? null : Lazy(this.selectedPokemon.stats)
         .map((stat) => { return stat.base_stat })
         .toArray()
     },
     pokemonPrimaryAttackVector() {
-      if (!this.selectedPokemon.stats) return null
+      if (!this.loaded) return null
       // Check if ATK > SPA
       const ATK = this.selectedPokemon.stats[1].base_stat
       const SPA = this.selectedPokemon.stats[3].base_stat
       if (ATK > SPA) { return 'physical' } else if (ATK < SPA) { return 'special' } else { return 'either' }
     },
     pokemonPrimaryDefenseVector() {
-      if (!this.selectedPokemon.stats) return null
+      if (!this.loaded) return null
       // Check if DEF < SPD
       const DEF = this.selectedPokemon.stats[2].base_stat
       const SPD = this.selectedPokemon.stats[4].base_stat
@@ -101,7 +103,7 @@ export const usePokedexStore = defineStore('pokedex', {
       return comboTypes
     },
     watchOutMoves() {
-      if (!this.selectedPokemon.types) return null
+      if (!this.loaded) return null
       // console.log('starting watchoutmoves', this.selectedPokemon)
 
       const selectedPokemonTypes = Lazy(this.selectedPokemon)
@@ -211,8 +213,8 @@ export const usePokedexStore = defineStore('pokedex', {
       if (this.filteredPokemon.length === 1) {
         const poke = this.filteredPokemon[0]
         this.setSelectedPokemon(poke.name)
-      } else if (results.length > 20) {
-        return results.slice(0,30)
+      } else if (this.filteredPokemon.length > 20) {
+        return this.filteredPokemon.slice(0,30)
       }
     },
     async getPokemonSpeciesList() {
@@ -245,14 +247,80 @@ export const usePokedexStore = defineStore('pokedex', {
       return poke
     },
     async setSelectedPokemon(name) {
+      this.loaded = false
       const poke = await P.getPokemonByName(name)
+      console.log('setting poke', poke, name)
+
       this.selectedPokemon = poke
       this.getDefenseSuperEffectiveTypes(poke.types)
       this.formatMoveset(poke.moves)
+      this.addToRecent(poke)
+      console.log('loaded?', this.loaded, this.selectedPokemon)
       this.loaded = true
+      console.log('loaded?', this.loaded, this.selectedPokemon)
+
+      // console.log('getting pokemon')
+      // const pokemon = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     query: `query samplePokeAPIquery {
+      //       pokemon_v2_pokemon(where: {name: {_eq: "meowscarada"}}) {
+      //         id
+      //         name
+      //         abilities: pokemon_v2_pokemonabilities {
+      //           data: pokemon_v2_ability {
+      //             name
+      //           }
+      //         }
+      //         moves: pokemon_v2_pokemonmoves {
+      //           level
+      //           pokemon_v2_move {
+      //             name
+      //             power
+      //             type_id
+      //             damage_class: pokemon_v2_movedamageclass {
+      //               name
+      //             }
+      //           }
+      //         }
+      //         stats:pokemon_v2_pokemonstats {
+      //           base_stat
+      //         }
+      //         types: pokemon_v2_pokemontypes {
+      //           data: pokemon_v2_type {
+      //             name
+      //           }
+      //         }
+      //       }
+      //     }`
+      //   })
+      // })
+      // // .catch((err) => {console.log(err)})
+      // .then((res) => res.json())
+      // .then((result) => {
+      //   console.log('init formattng', result.data)
+      //   let poke = result.data.pokemon_v2_pokemon[0]
+
+      //   poke.types = poke.types.map((t) => { return t.name })
+
+      //   console.log(poke)
+
+      //   return poke
+      // })
+
+      // return pokemon
+      // console.log('got poke?',pokemon)
+  
     },
     setNewQuery(query) {
       this.query = query
+    },
+    openPalette() {
+      this.query = ''
+      this.showPalette = true
     },
     setTeraType(type) {
       this.selectedTeraType = type
@@ -368,6 +436,15 @@ export const usePokedexStore = defineStore('pokedex', {
 
       // console.log("superEffective", superEffective)
       return superEffective
+    },
+    addToRecent(poke) {
+      console.log('adding to recent', poke)
+      this.recentPokemon = Lazy(this.recentPokemon)
+        .concat(poke)
+        .uniq('name')
+        .toArray()
+      
+      console.log(this.recentPokemon)
     }
   }
 })

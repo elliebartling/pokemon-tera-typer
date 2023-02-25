@@ -3,6 +3,7 @@
 // import HelloWorld from './components/HelloWorld.vue'
 import voca from 'voca'
 import Picker from './components/Picker.vue'
+import PickerPalette from './components/PickerPalette.vue'
 import Moves from './components/Moves.vue'
 import Chart from './components/Chart.vue'
 import Type from './components/Type.vue'
@@ -13,10 +14,13 @@ import MoveList from './components/MoveList.vue'
 const pokedex = usePokedexStore()
 pokedex.getPokemonSpeciesList()
 pokedex.getTypes()
+pokedex.setSelectedPokemon(pokedex.query)
 </script>
 
 <template>
     <div class="wrapper mt-0 sm:mt-32 sm:px-6">
+      <PickerPalette v-if="pokedex.showPalette" />
+
       <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
           <div className="lg:order-first lg:row-span-2 px-2 my-8 md:px-8">
             <div class="wrapper px-4">
@@ -24,35 +28,10 @@ pokedex.getTypes()
                 Not sure how to prep for your next Tera Raid? Here's a hint!
               </h1>
             </div>
-            <Header v-if="pokedex.types"/>
+            <Header />
           </div>
           <div v-if="pokedex" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
-            <div id="selected-pokemon" class="card w-full relative flex flex-col bg-gray-900 rounded-lg shadow-lg" v-if="pokedex.selectedPokemon">
-              <div class="sm:pl-48 pl-36">
-                <h2 class="font-sans text-white text-2xl font-bold">{{ voca(pokedex.selectedPokemon.name).capitalize() }}</h2>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-4">
-                  <p class="label mr-6 text-gray-400">Level {{ pokedex.pokemonLevel }}</p>
-                  <div class="flex flex-row">
-                    <Type 
-                      v-if="pokedex.selectedPokemon" 
-                      v-for="type in pokedex.selectedPokemon.types"
-                      class="mr-2 mb-2"
-                      :type="type.type.name" />
-                    </div>
-                </div>
-              </div>
-              <div class="w-32 sm:w-48 -left-28 sm:-left-36 -top-8 absolute">
-                <img 
-                    v-if="pokedex.selectedPokemon.sprites"
-                    :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
-                    alt=""
-                    sizes="(min-width: 1024px) 32rem, 20rem"
-                    className="aspect-square rotate-6 right-3 mt-4 rounded-2xl object-cover bg-gray-800 ml-28"
-                  />
-              </div>
-              <Chart class="sm:pl-48 pl-8" />
-            </div>
-            <div id="tactics" class="card px-8">
+            <div v-if="pokedex.loaded" id="tactics" class="card px-8">
               <h2 class="text-2xl font-bold text-white mb-2">Your defense</h2>
               <div id="player-defense" class="lex flex-row items-start mt-3">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center">
@@ -124,8 +103,8 @@ pokedex.getTypes()
                 <MoveList :list="pokedex.watchOutMoves" :showLevel="false" />
               </div>
             </div>
-            <div id="all-moves" class="card px-8">
-              <h2 class="text-2xl font-bold text-white mb-2">All of {{voca(pokedex.selectedPokemon.name).capitalize()}}'s moves</h2>
+            <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
+              <h2 class="text-2xl font-bold text-white mb-2">{{voca(pokedex.selectedPokemon.name).capitalize()}}'s moveset</h2>
               <div class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">By level</p>
                 <MoveList :list="pokedex.selectedPokemonMoveset['level-up']" :showLevel="true" />
