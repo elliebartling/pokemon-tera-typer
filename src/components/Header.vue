@@ -51,7 +51,7 @@ const capitalize = function(text) {
             <StarLevelPicker class="mt-6 mb-4" />
             <TeraPicker class="mt-2" />
         </div>
-        <MadeBy class="hidden md:block" />
+        <MadeBy class="hidden md:flex" />
     </div>
 </template>
 
