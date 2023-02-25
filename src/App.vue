@@ -32,7 +32,7 @@ pokedex.setSelectedPokemon(pokedex.query)
           </div>
           <div v-if="pokedex" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
             <div v-if="pokedex.loaded" id="tactics" class="card px-8">
-              <h2 class="text-2xl font-bold text-white mb-2">🏰 Your defense</h2>
+              <h2 class="text-2xl font-bold text-white mb-2">🏰 Defense</h2>
               <div id="player-defense" class="lex flex-row items-start mt-3">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center">
                   <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono mt-2 w-36 flex-shrink-0">Defend against:</p>
@@ -45,7 +45,7 @@ pokedex.setSelectedPokemon(pokedex.query)
                   </div>
                 </div>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center mt-3">
-                  <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-36 flex-shrink-0 whitespace-nowrap">Helpful typing:</p>
+                  <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-36 flex-shrink-0 whitespace-nowrap">Resisted typing:</p>
                   <div class="flex flex-row flex-wrap flex-shrink">
                     <Type 
                       v-for="type in pokedex.selectedPokemonDamageRelations.defense.resist"
@@ -72,7 +72,7 @@ pokedex.setSelectedPokemon(pokedex.query)
                 </div>
               </div>
               <hr class="border-1 border-gray-500 mt-8" />
-              <h2 class="text-2xl font-bold text-white mb-2 mt-8">⚔️ Your offense</h2>
+              <h2 class="text-2xl font-bold text-white mb-2 mt-8">⚔️ Offense</h2>
               <div id="player-offense" class="flex flex-col items-start mt-3">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center">
                   <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono mt-2 w-36 flex-shrink-0">Attack 2x:</p>
@@ -133,6 +133,10 @@ pokedex.setSelectedPokemon(pokedex.query)
               </div>
             </div>
           </div>
+        </div>
+        <div class="about flex flex-col gap-x-6 mt-7 ml-4 mb-10">
+            <span class="font-mono text-sm text-white font-semibold">Made with 🖤 and 🌮 by elliemb</span>
+            <span class="font-mono text-sm text-white font-semibold">Powered by PokeAPI</span>
         </div>
     </div>
 </template>

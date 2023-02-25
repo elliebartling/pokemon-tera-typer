@@ -50,7 +50,7 @@ const capitalize = function(text) {
             <StarLevelPicker class="mt-6 mb-4" />
             <TeraPicker class="mt-2" />
         </div>
-        <div class="about flex gap-x-6 mt-7 ml-4 ">
+        <div class="about hidden md:flex gap-x-6 mt-7 ml-4 ">
             <span class="font-mono text-sm text-white font-semibold">Made with 🖤 and 🌮 by elliemb</span>
             <span class="font-mono text-sm text-white font-semibold">Powered by PokeAPI</span>
         </div>
