@@ -17,7 +17,7 @@ const capitalize = function(text) {
 </script>
 
 <template>
-    <div id="pokemon" class="card w-full relative md:sticky top-48 flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
+    <div id="pokemon" class="card w-full relative md:sticky md:top-48 flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
         <div class="sm:pl-48 pl-36">
             <h2 
                 @click="pokedex.openPalette()"
@@ -56,6 +56,6 @@ const capitalize = function(text) {
 
 .collapsed {
     @apply flex flex-row justify-between items-center gap-7 text-base;
-    @apply sticky top-10;
+    @apply md:sticky md:top-10 top-0;
 }
 </style>

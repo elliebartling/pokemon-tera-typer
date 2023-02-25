@@ -35,23 +35,23 @@ export const usePokedexStore = defineStore('pokedex', {
     selectedTeraType: false,
     typeColors: {
           "normal": "zinc-400",
-          "fighting": "orange-700",
+          "fighting": "amber-600",
           "flying": "sky-500",
-          "poison": "violet-700",
+          "poison": "violet-600",
           "ground": "yellow-900",
-          "rock": "zinc-600",
+          "rock": "stone-400",
           "bug": "lime-600",
-          "ghost": "violet-900",
-          "steel": "slate-600",
+          "ghost": "purple-900",
+          "steel": "cyan-800",
           "fire": "red-600",
           "water": "blue-600",
           "grass": "emerald-600",
           "electric": "yellow-500",
           "psychic": "pink-500",
           "ice": "cyan-400",
-          "dragon": "sky-700",
+          "dragon": "teal-500",
           "dark": "slate-700",
-          "fairy": "rose-400",
+          "fairy": "pink-400",
       },
     types: []
   }),
@@ -65,7 +65,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .toArray()
         .slice(0,30)
 
-      if (list.length == 1) { this.setSelectedPokemon(list[0].name) }
+      // if (list.length == 1) { this.setSelectedPokemon(list[0].name) }
       return list
     },
     pokemonLevel() {

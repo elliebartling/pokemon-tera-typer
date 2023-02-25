@@ -11,7 +11,7 @@
                 'tera-type-selected' : 'ring-purple-500/20', 
                 `bg-${type.color}`
             ]">
-              <img class="w-8" :src="`/icons/${type.name}.svg`" />
+              <img class="w-8" :src="`/icons/${type.name}.png`" />
             </button>
           </div>
         </div>
@@ -32,10 +32,13 @@ const pokedex = usePokedexStore()
 .tera-type {
     @apply w-12 h-12;
     @apply ring ring-4 ring-offset-2;
-    @apply p-3 sm:p-4;
     @apply rounded-full;
     @apply opacity-70;
     @apply ring-offset-gray-900;
+}
+
+.tera-type img {
+    @apply object-cover w-full rounded-full;
 }
 
 .tera-type.tera-type-selected {
