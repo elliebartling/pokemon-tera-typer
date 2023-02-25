@@ -14,9 +14,12 @@ export const usePokedexStore = defineStore('pokedex', {
     selectedStarLevel: 5,
     recentPokemon: [],
     selectedPokemonDamageRelations: {
-      // The Tera Pokemon's offensive type
-      offense: {},
-      // The Tera Pokemon's defensive type
+      // The player's offense
+      offense: {
+        resist: [],
+        neutral: []
+      },
+      // The player's defense
       defense: []
     },
     selectedPokemonMoveset: [],
@@ -91,8 +94,9 @@ export const usePokedexStore = defineStore('pokedex', {
       if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
     overlappedTyping() {
+      const defensive_types = this.selectedPokemonDamageRelations.defense.neutral.concat(this.selectedPokemonDamageRelations.defense.resist)
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
-        .concat(this.selectedPokemonDamageRelations.defense)
+        .concat(defensive_types)
         .groupBy('name')
         .filter(function(v){return v.length > 1})
         .flatten()
@@ -202,6 +206,7 @@ export const usePokedexStore = defineStore('pokedex', {
           })
           .reject((t) => t.name === 'shadow' || t.name === 'unknown' )
           .toArray()
+
           this.types = typesWithData
         // console.log(typesWithData)
       })
@@ -410,6 +415,7 @@ export const usePokedexStore = defineStore('pokedex', {
           .toArray()
 
         console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
+
         superEffective = Lazy(half_damage_to)
           .concat(no_damage_to)
           .uniq('name')
@@ -418,8 +424,20 @@ export const usePokedexStore = defineStore('pokedex', {
             return isOverlapped != undefined 
           })
           .toArray()
+        
+        console.log(this.types, superEffective)
+        const neutral = Lazy(this.types)
+          .reject((type) => {
+            return superEffective.find((t) => t.name === type.name) != undefined
+          })
+          .reject((type) => {
+            return double_damage_to.find((t) => t.name === type.name) != undefined
+          })
+          .toArray()
 
-        this.selectedPokemonDamageRelations.defense = superEffective
+        console.log('neutral', neutral)
+        this.selectedPokemonDamageRelations.defense.neutral = neutral
+        this.selectedPokemonDamageRelations.defense.resist = superEffective
       })
     },
     async getNeutralDefensiveTyping(types) {
