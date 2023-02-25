@@ -11,7 +11,7 @@ import Type from './Type.vue'
 
 const pokedex = usePokedexStore()
 const capitalize = function(text) {
-    return voca(text).capitalize()
+    return voca(text).replaceAll('-', ' ').titleCase()
 }
 
 </script>
@@ -23,7 +23,7 @@ const capitalize = function(text) {
                 <h2 
                     @click="pokedex.openPalette()"
                     class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
-                    {{ voca(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...').capitalize() }}
+                    {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
                     <PencilSquareIcon v-if="!pokedex.showPalette && pokedex.loaded" class="w-6" />
                 </h2>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-4">

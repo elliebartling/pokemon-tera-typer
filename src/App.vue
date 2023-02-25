@@ -25,7 +25,7 @@ pokedex.setSelectedPokemon(pokedex.query)
           <div className="lg:order-first lg:row-span-2 px-2 mt-8 md:px-8">
             <div class="wrapper px-4">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Not sure how to prep for your next Tera Raid? Here's a hint!
+                Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
               </h1>
             </div>
             <Header />
@@ -101,13 +101,25 @@ pokedex.setSelectedPokemon(pokedex.query)
                 </div>
               </div>
               <hr class="border-1 border-gray-500 mt-8" />
-              <h2 class="text-2xl font-bold text-white mb-2 mt-8">🪄 Recommended types</h2>
-              <p class="label text-gray-500">Resisting or neutral defense & supereffective offense: </p>
+              <h2 class="text-2xl font-bold text-white mb-2 mt-8">🪄 Recommendations</h2>
+              <p class="label text-white">Resisted defense & supereffective offense: </p>
               <div id="player-overlap" class="items-start mt-3">
                 <div class="flex flex-row items-center">
                   <Type 
-                    v-if="pokedex.overlappedTyping && pokedex.overlappedTyping.length > 0"
-                    v-for="type in pokedex.overlappedTyping" 
+                    v-if="pokedex.resistedOverlappedTyping && pokedex.resistedOverlappedTyping.length > 0"
+                    v-for="type in pokedex.resistedOverlappedTyping" 
+                    class="mr-2 mb-2"
+                    :type="type.name"
+                  />
+                  <p v-else class="label text-gray-500">No overlaps between offensive & defensive typing. Use your best judgement! ✨ </p>
+                </div>
+              </div>
+              <p class="label text-white mt-4">Neutral defense & supereffective offense: </p>
+              <div id="player-overlap" class="items-start mt-3">
+                <div class="flex flex-row items-center">
+                  <Type 
+                    v-if="pokedex.neutralOverlappedTyping && pokedex.neutralOverlappedTyping.length > 0"
+                    v-for="type in pokedex.neutralOverlappedTyping" 
                     class="mr-2 mb-2"
                     :type="type.name"
                   />

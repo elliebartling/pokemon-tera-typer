@@ -93,8 +93,21 @@ export const usePokedexStore = defineStore('pokedex', {
       const SPD = this.selectedPokemon.stats[4].base_stat
       if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
-    overlappedTyping() {
-      const defensive_types = this.selectedPokemonDamageRelations.defense.neutral.concat(this.selectedPokemonDamageRelations.defense.resist)
+    resistedOverlappedTyping() {
+      const defensive_types = this.selectedPokemonDamageRelations.defense.resist
+      const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
+        .concat(defensive_types)
+        .groupBy('name')
+        .filter(function(v){return v.length > 1})
+        .flatten()
+        .uniq('name')
+        .toArray()
+
+      // console.log('combotypes', comboTypes)
+      return comboTypes
+    },
+    neutralOverlappedTyping() {
+      const defensive_types = this.selectedPokemonDamageRelations.defense.neutral
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
         .concat(defensive_types)
         .groupBy('name')

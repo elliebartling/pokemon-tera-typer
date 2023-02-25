@@ -33,7 +33,7 @@
                                 <div class="flex items-center">
                                     <img :src="getSpriteUrl(poke)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
                                     <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                                    {{ voca(poke.name).capitalize() }}
+                                    {{ capitalize(poke.name) }}
                                     </span>
                                 </div>
 
@@ -58,7 +58,7 @@
                             <div class="flex items-center">
                                 <img :src="getSpriteUrl(poke)" alt="" class="h-6 w-6 flex-shrink-0 rounded-full" />
                                 <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                                {{ voca(poke.name).capitalize() }}
+                                {{ capitalize(poke.name) }}
                                 </span>
                             </div>
 
@@ -120,7 +120,9 @@
       return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
   }
   
-  
+  const capitalize = function(text) {
+      return voca(text).replaceAll('-', ' ').titleCase()
+  }
   const query = ref('')
 
   function onSelect(item) {
