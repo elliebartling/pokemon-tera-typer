@@ -94,13 +94,14 @@ export const usePokedexStore = defineStore('pokedex', {
       if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
     resistedOverlappedTyping() {
+      if (!this.loaded) return null
       const defensive_types = this.selectedPokemonDamageRelations.defense.resist
       const comboTypes = Lazy(this.selectedPokemonDamageRelations.offense)
         .concat(defensive_types)
         .groupBy('name')
         .filter(function(v){return v.length > 1})
         .flatten()
-        .uniq('name')
+        // .uniq('name')
         .toArray()
 
       // console.log('combotypes', comboTypes)
@@ -126,13 +127,12 @@ export const usePokedexStore = defineStore('pokedex', {
       const selectedPokemonTypes = Lazy(this.selectedPokemon)
         .get('types')
         .map((t, i) => { 
-          // console.log("t", t)
           return t && t.type ? t.type.name : null 
         })
       
       this.selectedPokemonWatchoutMoveTypes = selectedPokemonTypes
       
-      // console.log('selectedpoketypes', selectedPokemonTypes)
+      console.log('selectedpoketypes', selectedPokemonTypes)
 
       const watchOutMoves = Lazy(this.selectedPokemonMoveset)
         .flatten()
@@ -141,10 +141,11 @@ export const usePokedexStore = defineStore('pokedex', {
         .flatten()
         .reject({ damage_class: 'status' })
         .filter((m) => { return m.power > 50 })
-        .filter((m) => { return m.damage_class === this.pokemonPrimaryAttackVector })
+        // .filter((m) => { return m.damage_class === this.pokemonPrimaryAttackVector })
         .filter((m) => { 
           const { super_effective } = m
-          const recommendedTypes = Lazy(this.overlappedTyping)
+          const recommendedTypes = Lazy(this.resistedOverlappedTyping)
+            .concat(this.neutralOverlappedTyping)
             .map((t) => { return t.name })
             .toArray()
 
@@ -152,7 +153,7 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
+      console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
     }
   },
