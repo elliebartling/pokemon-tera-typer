@@ -36,7 +36,13 @@ const capitalize = function(text) {
                         @click="pokedex.openPalette()"
                         class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
                         {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
-                        <div v-if="!pokedex.showPalette && pokedex.loaded" class="w-6">🔀</div>
+                        <button v-if="!pokedex.showPalette && pokedex.loaded" class="reset-button">
+                            🔀<span class="text-sm block"> Select</span>
+                            <!-- <div id="tooltip-default" role="tooltip" class="tooltip">
+                                Pick a new Pokémon
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div> -->
+                        </button>
                     </h2>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-1">
                         <div class="flex flex-row">
@@ -79,5 +85,19 @@ const capitalize = function(text) {
 .collapsed {
     @apply flex flex-row justify-between items-center gap-7 text-base;
     @apply md:sticky md:top-10 top-0;
+}
+
+.reset-button {
+    @apply absolute right-4 flex top-4 flex-row items-center gap-x-2 font-mono font-medium uppercase px-2 py-1 rounded-lg;
+    @apply bg-gradient-to-tr from-violet-500 to-rose-400;
+    @apply hover:from-purple-500 hover:to-rose-500;
+    @apply hover:bg-purple-700;
+    @apply shadow-xl shadow-purple-500/30;
+    @apply hover:top-3 hover:rotate-3;
+    @apply transition-all;
+}
+
+.reset-button .tooltip {
+    @apply absolute w-44 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700;
 }
 </style>
