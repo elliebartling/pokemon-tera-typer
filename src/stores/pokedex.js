@@ -9,7 +9,7 @@ const P = new Pokedex.Pokedex()
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
     pokemon: [],
-    query: 'fletchinder',
+    query: 'pikachu',
     selectedPokemon: {},
     selectedStarLevel: 5,
     recentPokemon: [],
@@ -272,6 +272,31 @@ export const usePokedexStore = defineStore('pokedex', {
       this.selectedPokemon = poke
       return poke
     },
+    async getAbilityDetails(ability) {
+      const ability_details = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `query samplePokeAPIquery {
+            pokemon_v2_ability(where: {name: {_eq: "${ability}"}}) {
+              id
+              name
+              effect: pokemon_v2_abilityeffecttexts(where: {language_id: {_eq: 9}}) {
+                short_effect
+              }
+            }
+          }
+          `
+        })
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        return result.data.pokemon_v2_ability[0].effect[0].short_effect
+      })
+      return ability_details
+    },
     async setSelectedPokemon(name) {
       this.loaded = false
       const poke = await P.getPokemonByName(name)
@@ -280,10 +305,16 @@ export const usePokedexStore = defineStore('pokedex', {
       this.selectedPokemon = poke
       this.getDefenseSuperEffectiveTypes(poke.types)
       this.formatMoveset(poke.moves)
+
+      // Go get ability details & format those, too
+      Lazy(poke.abilities)
+        .each(async (ab, i) => {
+          const effect = await this.getAbilityDetails(ab.ability.name)
+          this.selectedPokemon.abilities[i].effect = effect
+        })
+      
       this.addToRecent(poke)
-      console.log('loaded?', this.loaded, this.selectedPokemon)
       this.loaded = true
-      console.log('loaded?', this.loaded, this.selectedPokemon)
 
       // console.log('getting pokemon')
       // const pokemon = await fetch('https://beta.pokeapi.co/graphql/v1beta', {

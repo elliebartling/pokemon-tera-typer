@@ -9,6 +9,7 @@ import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import TeraPicker from './TeraPicker.vue'
 import Type from './Type.vue'
 import MadeBy from './MadeBy.vue'
+import Ability from './Ability.vue'
 
 const pokedex = usePokedexStore()
 const capitalize = function(text) {
@@ -18,35 +19,42 @@ const capitalize = function(text) {
 </script>
 
 <template>
-    <div class="relative md:sticky md:top-48">
+    <div class="relative md:sticky md:top-48 transition-all">
         <div id="pokemon" class="card w-full relative md:sticky md:top-48 flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
-            <div class="sm:pl-48 pl-36">
-                <h2 
-                    @click="pokedex.openPalette()"
-                    class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
-                    {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
-                    <PencilSquareIcon v-if="!pokedex.showPalette && pokedex.loaded" class="w-6" />
-                </h2>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-4">
-                    <div class="flex flex-row">
-                        <Type 
-                            v-for="type in pokedex.selectedPokemon.types"
-                            class="mr-2 mb-2"
-                            :type="type.type.name" 
+            <div class="flex flex-row">
+                <div class="flex flex-col order-0 w-1/3 pr-4">
+                    <img 
+                        v-if="pokedex.loaded"
+                        :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
+                        alt=""
+                        sizes="(min-width: 1024px) 32rem, 20rem"
+                        class="image"
                         />
+                </div>
+                <div class="w-1/2 order-1">
+                    <h2 
+                        @click="pokedex.openPalette()"
+                        class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
+                        {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
+                        <div v-if="!pokedex.showPalette && pokedex.loaded" class="w-6">🔀</div>
+                    </h2>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-1">
+                        <div class="flex flex-row">
+                            <Type 
+                                v-for="type in pokedex.selectedPokemon.types"
+                                class="mr-2 mb-2"
+                                :type="type.type.name" 
+                            />
+                        </div>
                     </div>
+                    <Chart v-if="pokedex.loaded" class="w-full" />
                 </div>
             </div>
-            <div class="w-32 sm:w-48 -left-24 sm:-left-36 -top-0 absolute">
-                <img 
-                    v-if="pokedex.loaded"
-                    :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
-                    alt=""
-                    sizes="(min-width: 1024px) 32rem, 20rem"
-                    className="aspect-square sm:rotate-6 right-3 mt-4 rounded-2xl object-cover bg-gray-800 ml-28"
-                    />
+            <hr class="mt-6 border-1 border-gray-500 mb-4" />
+            <p class="label text-gray-400">Abilities:</p>
+            <div id="abilities">
+                <Ability v-for="ability in pokedex.selectedPokemon.abilities" :ability="ability" />
             </div>
-            <Chart v-if="pokedex.loaded" class="pl-36 sm:pl-48" />
             <hr class="mt-6 border-1 border-gray-500" />
             <StarLevelPicker class="mt-6 mb-4" />
             <TeraPicker class="mt-2" />
@@ -56,6 +64,16 @@ const capitalize = function(text) {
 </template>
 
 <style scoped>
+.image {
+    @apply w-full aspect-square rounded-2xl object-cover bg-gray-800 mb-4;
+    @apply lg:w-36 xl:w-48 sm:-left-32 sm:-top-8 sm:absolute sm:rotate-6 md:right-3 md:mt-4 md:ml-28;
+}
+
+#abilities {
+    @apply grid grid-flow-col;
+    @apply gap-y-2 gap-x-2;
+    @apply mt-0;
+}
 
 
 .collapsed {
