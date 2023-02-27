@@ -37,7 +37,7 @@ const capitalize = function(text) {
                         class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
                         {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
                         <button v-if="!pokedex.showPalette && pokedex.loaded" class="reset-button">
-                            🔀<span class="text-sm block"> Select</span>
+                            🔀<span class="text-sm block"> Select Pokémon</span>
                             <!-- <div id="tooltip-default" role="tooltip" class="tooltip">
                                 Pick a new Pokémon
                                 <div class="tooltip-arrow" data-popper-arrow></div>
@@ -71,8 +71,10 @@ const capitalize = function(text) {
 
 <style scoped>
 .image {
+    /* Up to first breakpoint */
     @apply w-full aspect-square rounded-2xl object-cover bg-gray-800 mb-4;
-    @apply lg:w-36 xl:w-48 sm:-left-32 sm:-top-8 sm:absolute sm:rotate-6 md:right-3 md:mt-4 md:ml-28;
+    /* Big image, rotated */
+    @apply lg:w-36 xl:w-48 lg:-left-32 lg:-top-8 lg:absolute lg:rotate-6 lg:right-3 lg:mt-4 lg:ml-28;
 }
 
 #abilities {
@@ -88,11 +90,12 @@ const capitalize = function(text) {
 }
 
 .reset-button {
-    @apply absolute right-4 flex top-4 flex-row items-center gap-x-2 font-mono font-medium uppercase px-2 py-1 rounded-lg;
-    @apply bg-gradient-to-tr from-violet-500 to-rose-400;
+    @apply -top-6 right-0;
+    @apply absolute xl:right-4 flex xl:top-4 flex-row items-center gap-x-2 font-mono font-medium uppercase px-3 py-1 rounded-xl;
+    @apply bg-violet-500 sm:bg-gradient-to-tr from-rose-500 to-blue-400;
     @apply hover:from-purple-500 hover:to-rose-500;
     @apply hover:bg-purple-700;
-    @apply shadow-xl shadow-purple-500/30;
+    @apply sm:shadow-xl shadow-purple-500/30;
     @apply hover:top-3 hover:rotate-3;
     @apply transition-all;
 }
