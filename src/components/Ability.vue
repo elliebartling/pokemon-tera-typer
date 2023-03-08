@@ -37,7 +37,7 @@ export default {
 <style>
 .ability {
     @apply text-xs text-white font-mono rounded-xl bg-gray-800 px-2 py-1 inline-block;
-    @apply flex-shrink;
+    @apply w-full;
 }
 .ability-name {
     @apply font-bold;

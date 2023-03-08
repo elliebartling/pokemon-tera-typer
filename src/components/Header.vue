@@ -22,7 +22,7 @@ const capitalize = function(text) {
     <div class="relative md:sticky md:top-48 transition-all">
         <div id="pokemon" class="card w-full relative md:sticky md:top-48 flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
             <div class="flex flex-row">
-                <div class="flex flex-col order-0 w-1/3 pr-4">
+                <div class="relative flex flex-col order-0 w-1/3 pr-4">
                     <img 
                         v-if="pokedex.loaded"
                         :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
@@ -30,19 +30,15 @@ const capitalize = function(text) {
                         sizes="(min-width: 1024px) 32rem, 20rem"
                         class="image"
                         />
+                    <button v-if="!pokedex.showPalette && pokedex.loaded" class="reset-button">
+                        🔀<span class="text-sm block"> Switch Pokémon</span>
+                    </button>
                 </div>
-                <div class="w-1/2 order-1">
+                <div class="w-2/3 order-1">
                     <h2 
                         @click="pokedex.openPalette()"
                         class="font-sans text-white text-2xl font-bold cursor-pointer flex flex-row gap-x-3 items-center">
                         {{ capitalize(pokedex.loaded ? pokedex.selectedPokemon.name : 'loading...') }}
-                        <button v-if="!pokedex.showPalette && pokedex.loaded" class="reset-button">
-                            🔀<span class="text-sm block"> Select Pokémon</span>
-                            <!-- <div id="tooltip-default" role="tooltip" class="tooltip">
-                                Pick a new Pokémon
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div> -->
-                        </button>
                     </h2>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center mt-2 mb-1">
                         <div class="flex flex-row">
@@ -73,8 +69,10 @@ const capitalize = function(text) {
 .image {
     /* Up to first breakpoint */
     @apply w-full aspect-square rounded-2xl object-cover bg-gray-800 mb-4;
+    /* Md, rotated */
+    @apply md:-left-40 md:-top-16;
     /* Big image, rotated */
-    @apply lg:w-36 xl:w-48 lg:-left-32 lg:-top-8 lg:absolute lg:rotate-6 lg:right-3 lg:mt-4 lg:ml-28;
+    @apply lg:w-48 xl:w-48 lg:-left-36  lg:absolute lg:rotate-6 lg:right-3 lg:mt-4 lg:ml-28;
 }
 
 #abilities {
@@ -90,13 +88,16 @@ const capitalize = function(text) {
 }
 
 .reset-button {
-    @apply -top-6 right-0;
-    @apply absolute xl:right-4 flex xl:top-4 flex-row items-center gap-x-2 font-mono font-medium uppercase px-3 py-1 rounded-xl;
-    @apply bg-violet-500 sm:bg-gradient-to-tr from-rose-500 to-blue-400;
+    @apply absolute bottom-5 left-1;
+    @apply md:left-4 md:-bottom-2;
+    @apply lg:bottom-6 lg:-left-5;
+    @apply xl:bottom-12 lg:-left-8;
+    @apply flex flex-row items-center gap-x-2;
+    @apply font-mono font-medium text-white uppercase px-3 py-2 rounded-xl;
+    @apply bg-violet-600 hover:bg-gradient-to-tr from-rose-500 to-blue-400;
     @apply hover:from-purple-500 hover:to-rose-500;
-    @apply hover:bg-purple-700;
     @apply sm:shadow-xl shadow-purple-500/30;
-    @apply hover:top-3 hover:rotate-3;
+    @apply hover:rotate-3;
     @apply transition-all;
 }
 
