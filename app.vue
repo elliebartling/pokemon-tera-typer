@@ -1,34 +1,12 @@
-<script setup>
-// import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
-import voca from 'voca'
-import Picker from './components/Picker.vue'
-import PickerPalette from './components/PickerPalette.vue'
-import Moves from './components/Moves.vue'
-import Chart from './components/Chart.vue'
-import Type from './components/Type.vue'
-import Move from './components/Move.vue'
-import Header from './components/Header.vue'
-import { usePokedexStore } from './stores/pokedex'
-import MoveList from './components/MoveList.vue'
-import MadeBy from './components/MadeBy.vue'
-const pokedex = usePokedexStore()
-pokedex.getPokemonSpeciesList()
-pokedex.getTypes()
-pokedex.setSelectedPokemon(pokedex.query)
-const capitalize = function(text) {
-  return voca(text).replaceAll('-', ' ').titleCase()
-}
-</script>
-
 <template>
+  <div id="app" class="container mx-auto">
     <div class="wrapper mt-0 sm:mt-32 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
 
-      <div className="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12">
-          <div className="xl:order-first lg:row-span-2 px-2 mt-8 md:px-8">
+      <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12">
+          <div class="xl:order-first lg:row-span-2 px-2 mt-8 md:px-8">
             <div class="wrapper px-4">
-              <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+              <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
                 Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
               </h1>
             </div>
@@ -140,7 +118,7 @@ const capitalize = function(text) {
                 <MoveList :list="pokedex.watchOutMoves" :showLevel="false" :filterEffectiveBy="pokedex.allOverlappedTyping" />
               </div>
             </div>
-            <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
+            <!-- <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
               <h2 class="text-2xl font-bold text-white mb-2">{{capitalize(pokedex.selectedPokemon.name)}}'s moveset</h2>
               <div class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">By level</p>
@@ -152,13 +130,35 @@ const capitalize = function(text) {
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">By TM</p>
                 <MoveList :list="pokedex.selectedPokemonMoveset['machine']" :showLevel="false" />
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
        <MadeBy class="block md:hidden" />
     </div>
+  </div>
 </template>
-
+<script setup>
+// import { RouterLink, RouterView } from 'vue-router'
+// import HelloWorld from './components/HelloWorld.vue'
+import voca from 'voca'
+import Picker from './components/Picker.vue'
+import PickerPalette from './components/PickerPalette.vue'
+import Moves from './components/Moves.vue'
+import Chart from './components/Chart.vue'
+import Type from './components/Type.vue'
+import Move from './components/Move.vue'
+import Header from './components/Header.vue'
+import { usePokedexStore } from './stores/pokedex'
+import MoveList from './components/MoveList.vue'
+import MadeBy from './components/MadeBy.vue'
+const pokedex = usePokedexStore()
+pokedex.getPokemonSpeciesList()
+pokedex.getTypes()
+pokedex.setSelectedPokemon(pokedex.query)
+const capitalize = function(text) {
+  return voca(text).replaceAll('-', ' ').titleCase()
+}
+</script>
 <style>
 header {
   line-height: 1.5;

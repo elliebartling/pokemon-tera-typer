@@ -1,10 +1,13 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import Lazy from "lazy.js"
+// import _ from lodash
 import voca from 'voca'
 import * as Pokedex from 'pokeapi-js-wrapper'
 
 const P = new Pokedex.Pokedex()
+
+console.log('hey! its pinapple')
 
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
@@ -139,7 +142,7 @@ export const usePokedexStore = defineStore('pokedex', {
       
       this.selectedPokemonWatchoutMoveTypes = selectedPokemonTypes
       
-      console.log('selectedpoketypes', selectedPokemonTypes)
+      // console.log('selectedpoketypes', selectedPokemonTypes)
 
       const watchOutMoves = Lazy(this.selectedPokemonMoveset)
         .flatten()
@@ -160,7 +163,7 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
+      // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
     }
   },
@@ -262,7 +265,7 @@ export const usePokedexStore = defineStore('pokedex', {
       })
       .then((res) => res.json())
       .then((result) => { 
-        console.log(result) 
+        // console.log(result) 
         this.pokemon = result.data.pokemon
       })
       // this.pokemon = species.results
@@ -300,7 +303,7 @@ export const usePokedexStore = defineStore('pokedex', {
     async setSelectedPokemon(name) {
       this.loaded = false
       const poke = await P.getPokemonByName(name)
-      console.log('setting poke', poke, name)
+      // console.log('setting poke', poke, name)
 
       this.selectedPokemon = poke
       this.getDefenseSuperEffectiveTypes(poke.types)
@@ -439,7 +442,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .toArray()
 
       Promise.all(typePromiseArray).then((values) => {
-        console.log('values', values)
+        // console.log('values', values)
 
         // Get basic info: what does this type do half + no damage to?
         const no_damage_to = Lazy(values)
@@ -466,7 +469,7 @@ export const usePokedexStore = defineStore('pokedex', {
           .uniq('name')
           .toArray()
 
-        console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
+        // console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
 
         superEffective = Lazy(half_damage_to)
           .concat(no_damage_to)
@@ -477,7 +480,7 @@ export const usePokedexStore = defineStore('pokedex', {
           })
           .toArray()
         
-        console.log(this.types, superEffective)
+        // console.log(this.types, superEffective)
         const neutral = Lazy(this.types)
           .reject((type) => {
             return superEffective.find((t) => t.name === type.name) != undefined
@@ -487,7 +490,7 @@ export const usePokedexStore = defineStore('pokedex', {
           })
           .toArray()
 
-        console.log('neutral', neutral)
+        // console.log('neutral', neutral)
         this.selectedPokemonDamageRelations.defense.neutral = neutral
         this.selectedPokemonDamageRelations.defense.resist = superEffective
       })
@@ -508,13 +511,13 @@ export const usePokedexStore = defineStore('pokedex', {
       return superEffective
     },
     addToRecent(poke) {
-      console.log('adding to recent', poke)
+      // console.log('adding to recent', poke)
       this.recentPokemon = Lazy(this.recentPokemon)
         .concat(poke)
         .uniq('name')
         .toArray()
       
-      console.log(this.recentPokemon)
+      // console.log(this.recentPokemon)
     }
   }
 })
