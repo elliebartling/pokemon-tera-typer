@@ -14,7 +14,7 @@
           </div>
           <div v-if="pokedex" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
             <Typing />
-            <div v-if="pokedex.loaded" id="tactics" class="card px-8">
+            <!-- <div v-if="pokedex.loaded" id="tactics" class="card px-8">
               <div id="player-defense" class="lex flex-row items-start mt-3">
                 <div class="flex flex-row gap-x-2 sm:flex-row items-center">
                   <h2 class="text-2xl font-bold text-white mb-2">🏰 Defense</h2>
@@ -118,7 +118,7 @@
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">But watch out for moves like...</p>
                 <MoveList :list="pokedex.watchOutMoves" :showLevel="false" :filterEffectiveBy="pokedex.allOverlappedTyping" />
               </div>
-            </div>
+            </div> -->
             <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
               <h2 class="text-2xl font-bold text-white mb-2">{{capitalize(pokedex.selectedPokemon.name)}}'s moveset</h2>
               <div class="flex flex-col items-start mt-3">
