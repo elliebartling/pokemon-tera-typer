@@ -5,7 +5,19 @@ export default defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         'nuxt-lodash',
         '@pinia/nuxt',
+        '@nuxtjs/apollo',
+        'nuxt-graphql-server'
         // 'nuxt-headlessui'
     ],
     css: ['@/assets/main.css'],
+    apollo: {
+        clients: {
+            default: {
+            httpEndpoint: 'https://api.spacex.land/graphql'
+            }
+        },
+    },
+    graphqlServer: {
+        url: '/api/graphql',
+    },
 })

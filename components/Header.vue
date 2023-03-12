@@ -19,8 +19,8 @@ const capitalize = function(text) {
 </script>
 
 <template>
-    <div class="relative transition-all">
-        <div id="pokemon" class="card w-full relative md:sticky md:top-12 flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
+    <div class="relative md:sticky md:top-12 transition-all">
+        <div id="pokemon" class="card w-full relative  flex flex-col bg-gray-900 rounded-lg shadow-lg mt-12">
             <div class="flex flex-row">
                 <div class="relative flex flex-col order-0 w-1/3 pr-4">
                     <img 

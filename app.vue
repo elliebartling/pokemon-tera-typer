@@ -1,6 +1,7 @@
 <template>
   <div id="app" class="container mx-auto">
-    <div class="wrapper mt-0 sm:mt-32 sm:px-6">
+    <p>There are {{ data?.ships?.length || 0 }} ships.</p>
+    <!-- <div class="wrapper mt-0 sm:mt-32 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
 
       <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12">
@@ -118,7 +119,7 @@
                 <MoveList :list="pokedex.watchOutMoves" :showLevel="false" :filterEffectiveBy="pokedex.allOverlappedTyping" />
               </div>
             </div>
-            <!-- <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
+            <div v-if="pokedex.loaded" id="all-moves" class="card px-8">
               <h2 class="text-2xl font-bold text-white mb-2">{{capitalize(pokedex.selectedPokemon.name)}}'s moveset</h2>
               <div class="flex flex-col items-start mt-3">
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">By level</p>
@@ -130,16 +131,17 @@
                 <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">By TM</p>
                 <MoveList :list="pokedex.selectedPokemonMoveset['machine']" :showLevel="false" />
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
        <MadeBy class="block md:hidden" />
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup>
 // import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
+
 import voca from 'voca'
 import Picker from './components/Picker.vue'
 import PickerPalette from './components/PickerPalette.vue'
@@ -151,10 +153,21 @@ import Header from './components/Header.vue'
 import { usePokedexStore } from './stores/pokedex'
 import MoveList from './components/MoveList.vue'
 import MadeBy from './components/MadeBy.vue'
-const pokedex = usePokedexStore()
-pokedex.getPokemonSpeciesList()
-pokedex.getTypes()
-pokedex.setSelectedPokemon(pokedex.query)
+const { clients, getToken, onLogin, onLogout } = useApollo()
+const query = gql`#graphql
+query getShips($limit: Int!) {
+  ships(limit: $limit) {
+    id
+  }
+}`
+
+const { data } = await useAsyncQuery(query, { limit: 10 })
+console.log('ships?', data)
+
+// const pokedex = usePokedexStore()
+// pokedex.getPokemonSpeciesList()
+// pokedex.getTypes()
+// pokedex.setSelectedPokemon(pokedex.query)
 const capitalize = function(text) {
   return voca(text).replaceAll('-', ' ').titleCase()
 }
