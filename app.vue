@@ -1,7 +1,6 @@
 <template>
   <div id="app" class="container mx-auto">
-    <p>There are {{ data?.ships?.length || 0 }} ships.</p>
-    <!-- <div class="wrapper mt-0 sm:mt-32 sm:px-6">
+    <div class="wrapper mt-0 sm:mt-32 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
 
       <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12">
@@ -135,7 +134,7 @@
           </div>
         </div>
        <MadeBy class="block md:hidden" />
-    </div> -->
+    </div>
   </div>
 </template>
 <script setup>
@@ -153,21 +152,8 @@ import Header from './components/Header.vue'
 import { usePokedexStore } from './stores/pokedex'
 import MoveList from './components/MoveList.vue'
 import MadeBy from './components/MadeBy.vue'
-const { clients, getToken, onLogin, onLogout } = useApollo()
-const query = gql`#graphql
-query getShips($limit: Int!) {
-  ships(limit: $limit) {
-    id
-  }
-}`
 
-const { data } = await useAsyncQuery(query, { limit: 10 })
-console.log('ships?', data)
-
-// const pokedex = usePokedexStore()
-// pokedex.getPokemonSpeciesList()
-// pokedex.getTypes()
-// pokedex.setSelectedPokemon(pokedex.query)
+const pokedex = usePokedexStore()
 const capitalize = function(text) {
   return voca(text).replaceAll('-', ' ').titleCase()
 }

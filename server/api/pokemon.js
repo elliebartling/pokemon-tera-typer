@@ -4,8 +4,10 @@ import { startServerAndCreateH3Handler } from '@as-integrations/h3'
 import Pokedex from 'pokedex-promise-v2';
 const P = new Pokedex();
 
-const pokemon = P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')
+const pokemon = await P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')
     .then(res => res.pokemon_entries)
+
+console.log('pokemon', pokemon)
 
 const pokemonTypes = P.getTypesList()
     .then(res => res.results)
