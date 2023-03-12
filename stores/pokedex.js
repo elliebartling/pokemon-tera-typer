@@ -5,6 +5,10 @@ import voca from 'voca'
 import Pokedex from 'pokedex-promise-v2';
 const P = new Pokedex();
 
+function isInList(name, list) {
+  return Lazy(list).find((n) => { return n.name === name })
+}
+
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
     pokemon: [],
@@ -141,6 +145,116 @@ export const usePokedexStore = defineStore('pokedex', {
 
       // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
+    },
+    typeChart() {
+      if (!this.loaded) return null
+
+      // ----------------------------------------
+      // Get player offensive data
+      // ----------------------------------------
+
+      // Get the detailed type data for the selected tera type
+      const pokemonTeraType = this.getTypeByName(this.selectedTeraType.name)
+
+      // Get super-effective types against the selected tera type
+      const superEffectiveTypes = pokemonTeraType.damage_relations.double_damage_from
+
+      // Pull damage relations from the tera type
+      const { double_damage_from, no_damage_from, half_damage_from } = pokemonTeraType.damage_relations
+
+      // Search this.types for any types that the tera type does not resist
+      const neutralEffectiveTypes = Lazy(this.types)
+        .filter((type) => {
+          // Filter out types that are in double_damage_from, no_damage_from, or half_damage_from
+          const isNeutral = !isInList(type.name, double_damage_from) && !isInList(type.name, no_damage_from) && !isInList(type.name, half_damage_from)
+          // const isNeutral = !double_damage_from.includes(pokemonTeraType) && !no_damage_from.includes(pokemonTeraType) && !half_damage_from.includes(pokemonTeraType)
+          return isNeutral
+        })
+        .toArray()
+      
+      // ----------------------------------------
+      // Get player defensive data
+      // ----------------------------------------
+      
+      // Get types array from state with data
+      const typesWithData = this.selectedPokemon.types.map((t) => this.getTypeByName(t.type.name))
+
+      // Get basic info: what does this type do half + no damage to?
+      const no_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('no_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
+
+      const half_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('half_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
+
+      // Now, check for double typing conflicts:
+      // If this type does double damage to a type that's resisted by
+      // the other type, that's not good defensive typing
+      const double_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('double_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
+      
+      console.log('double_damage_to', double_damage_to)
+      // Join half and no damage to arrays
+      const superResistTypes = Lazy(half_damage_to)
+        .concat(no_damage_to)
+        .toArray()
+      
+      // Get neutral types by process of elimination — filter out types that are in reistTypes
+      const neutralResistTypes = Lazy(this.types)
+        .reject((type) => {
+          return isInList(type.name, superResistTypes) || isInList(type.name, double_damage_to)
+        })
+        .toArray()
+      
+      let quadrants = {
+        quad1: [],
+        quad2: [],
+        quad3: [],
+        quad4: [],
+        quad5: []
+      }
+
+      console.log('resistTypes', superResistTypes, 'neutralTypes', neutralResistTypes)
+      Lazy(this.types)
+        .each((type) => {
+          // Quad 1: super effective, super resisted
+          if (isInList(type.name, superEffectiveTypes) && isInList(type.name, superResistTypes)) {
+            quadrants.quad1.push(type)
+          // Quad 2: super effective, neutral resisted
+          } else if (isInList(type.name, superEffectiveTypes) && isInList(type.name, neutralResistTypes)) {
+            quadrants.quad2.push(type)
+          // Quad 3: neutral effective, super resisted
+          } else if (isInList(type.name, neutralEffectiveTypes) && isInList(type.name, superResistTypes)) {
+            quadrants.quad3.push(type)
+          } else if (isInList(type.name, neutralEffectiveTypes) && isInList(type.name, neutralResistTypes)) {
+            quadrants.quad4.push(type)
+          } else {
+            quadrants.quad5.push(type)
+          }
+        })
+
+      return {
+        defense: {
+          super: superResistTypes,
+          neutral: neutralResistTypes
+        },
+        offense: {
+          super: superEffectiveTypes,
+          neutral: neutralEffectiveTypes
+        },
+        quadrants
+      }
     }
   },
   actions: {

@@ -13,6 +13,7 @@
             <Header />
           </div>
           <div v-if="pokedex" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
+            <Typing />
             <div v-if="pokedex.loaded" id="tactics" class="card px-8">
               <div id="player-defense" class="lex flex-row items-start mt-3">
                 <div class="flex flex-row gap-x-2 sm:flex-row items-center">
