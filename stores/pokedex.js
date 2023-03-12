@@ -114,7 +114,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .flatten()
         .uniq('name')
         .toArray()
-
+ 
       return comboTypes
     },
     watchOutMoves() {
