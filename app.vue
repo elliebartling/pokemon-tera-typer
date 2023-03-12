@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container mx-auto">
+  <div id="app" v-if="pokedex.loaded" class="container mx-auto">
     <div class="wrapper mt-0 sm:mt-32 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
 
@@ -154,6 +154,8 @@ import MoveList from './components/MoveList.vue'
 import MadeBy from './components/MadeBy.vue'
 
 const pokedex = usePokedexStore()
+pokedex.init()
+
 const capitalize = function(text) {
   return voca(text).replaceAll('-', ' ').titleCase()
 }

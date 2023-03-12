@@ -1,27 +1,16 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import Lazy from "lazy.js"
 // import _ from lodash
 import voca from 'voca'
 import Pokedex from 'pokedex-promise-v2';
-import typeColors from './typeColors.json'
 const P = new Pokedex();
-
-const pokemon = await P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')
-    .then(res => res.pokemon_entries.map(pokemon => pokemon.pokemon_species))
-
-const pokemonTypesList = await P.getTypesList().then(res => res.results)
-const pokemonTypes = await Promise.all(pokemonTypesList.map(type => P.getTypeByName(type.name)))
-    .then(types => types.map(type => {return { ...type, color: typeColors[type.name] }}))
-
-const selectedPokemon = await P.getPokemonByName('pikachu')
 
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
-    pokemon,
-    types: pokemonTypes,
-    query: 'pikachu',
-    selectedPokemon,
+    pokemon: [],
+    types: [],
+    query: '',
+    selectedPokemon: {},
     selectedStarLevel: 5,
     recentPokemon: [],
     selectedPokemonDamageRelations: {
@@ -44,19 +33,20 @@ export const usePokedexStore = defineStore('pokedex', {
       { stars: 6, level: "90" },
       { stars: 7, level: "100" },
     ],
-    loaded: true,
+    loaded: false,
     showPalette: false,
-    selectedTeraType: pokemonTypes[0],
+    selectedTeraType: false,
   }),
   getters: {
     filteredPokemon() {
-      if (!this.pokemon) return []
+      if (!this.pokemon && !this.loaded) return []
 
       const q = voca(this.query).lowerCase()
       const list = Lazy(this.pokemon)
         .filter((pokemon) => { return pokemon.name.includes(q) })
+        .shuffle()
         .toArray()
-        .slice(0,30)
+        .slice(0,20)
 
       // if (list.length == 1) { this.setSelectedPokemon(list[0].name) }
       return list
@@ -70,21 +60,21 @@ export const usePokedexStore = defineStore('pokedex', {
         .toArray()
     },
     pokemonPrimaryAttackVector() {
-      if (!this.loaded) return null
+      if (!this.loaded || !this.selectedPokemon.stats) return null
       // Check if ATK > SPA
       const ATK = this.selectedPokemon.stats[1].base_stat
       const SPA = this.selectedPokemon.stats[3].base_stat
       if (ATK > SPA) { return 'physical' } else if (ATK < SPA) { return 'special' } else { return 'either' }
     },
     pokemonPrimaryDefenseVector() {
-      if (!this.loaded) return null
+      if (!this.loaded || !this.selectedPokemon.stats) return null
       // Check if DEF < SPD
       const DEF = this.selectedPokemon.stats[2].base_stat
       const SPD = this.selectedPokemon.stats[4].base_stat
       if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
     },
     allOverlappedTyping() {
-      if (!this.loaded) return null
+      if (!this.loaded || !this.selectedPokemon.stats) return null
       return Lazy(this.resistedOverlappedTyping)
         .concat(this.neutralOverlappedTyping)
         // .map((n) => n.name)
@@ -118,11 +108,10 @@ export const usePokedexStore = defineStore('pokedex', {
       return comboTypes
     },
     watchOutMoves() {
-      if (!this.loaded) return null
+      if (!this.loaded && !this.selectedPokemon) return null
       // console.log('starting watchoutmoves', this.selectedPokemon)
 
-      const selectedPokemonTypes = Lazy(this.selectedPokemon)
-        .get('types')
+      const selectedPokemonTypes = Lazy(this.selectedPokemon.types)
         .map((t, i) => { 
           return t && t.type ? t.type.name : null 
         })
@@ -143,7 +132,7 @@ export const usePokedexStore = defineStore('pokedex', {
           const { super_effective } = m
           const recommendedTypes = Lazy(this.resistedOverlappedTyping)
             .concat(this.neutralOverlappedTyping)
-            .map((t) => { return t.name })
+            // .map((t) => { return t.name })
             .toArray()
 
           return super_effective.some( r => recommendedTypes.includes(r) )
@@ -155,73 +144,22 @@ export const usePokedexStore = defineStore('pokedex', {
     }
   },
   actions: {
-    // getTypes() {
-    //   console.log('getting types')
-    //   fetch('https://beta.pokeapi.co/graphql/v1beta', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       query: `query samplePokeAPIquery {
-    //         types: pokemon_v2_type {
-    //           name
-    //           id
-    //           pokemon_v2_typeefficacies {
-    //             damage_factor
-    //             target_type: pokemonV2TypeByTargetTypeId {
-    //               name
-    //             }
-    //           }
-    //         }
-    //       }`
-    //     })
-    //   })
-    //   .then((res) => res.json())
-    //   .then((result) => {
-    //     const {types} = result.data
-    //     const typesWithData = Lazy(types)
-    //       .map((t) => {
-    //         let strength
-    //         const efficiencies = Lazy(t.pokemon_v2_typeefficacies)
-    //           .map((f) => {
-    //             f['target_type'] = f['target_type'].name
-    //             return f
-    //           })
-    //           .groupBy('damage_factor')
-    //           .toObject()
-            
-    //         Lazy(efficiencies)
-    //           .keys()
-    //           .each((g, i) => {
-    //             // console.log('g', g, i, efficiencies[i], efficiencies[g])
+    async init() {
 
-    //             const new_factors = efficiencies[g].map((i) => { 
-    //               // console.log('i', i)
-    //               return i.target_type 
-    //             })
+      // Get the bulk of the data from the cached API
+      const pokemon = await $fetch('/api/pokedex')
+      this.pokemon = pokemon
 
-    //             efficiencies[g] = new_factors
+      const pokemonTypes = await $fetch('/api/types')
+      this.types = pokemonTypes
 
-    //             // g is an array of damage factors, with redundant damage_factor data
-    //             // g = [{ damage_factor : 50, target_type: rock }, { damage_factor : 50, target_type: steel }]
-    //             // for each group of damage factors
-    //             // iterate over each individual factor
-    //             // and return just the target type so that g = ['rock', 'steel']
-    //             // { damage_vs: { 50: [arr], 100: [arr], 200: [arr] } }
-    //           })
-              
-    //         t['color'] = this.typeColors[t.name]
-    //         t['damage_vs'] = efficiencies
-    //         return t
-    //       })
-    //       .reject((t) => t.name === 'shadow' || t.name === 'unknown' )
-    //       .toArray()
+      // Give everyone a starter pokemon
+      this.setSelectedPokemon('pikachu')
 
-    //       this.types = typesWithData
-    //     // console.log(typesWithData)
-    //   })
-    // },
+      // Set the default tera type
+      this.setTeraType(pokemonTypes[2])
+      // this.loaded = true
+    },
     setNewPokemon() {
       console.log('set new poke')
       // this.loaded = false
@@ -233,30 +171,6 @@ export const usePokedexStore = defineStore('pokedex', {
         return this.filteredPokemon.slice(0,30)
       }
     },
-    // async getPokemonSpeciesList() {
-    //   // const species = await P.getPokemonSpeciesList()
-    //   const new_species = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       query: `query samplePokeAPIquery {
-    //         pokemon: pokemon_v2_pokemonspecies(where: {pokemon_v2_pokemondexnumbers: {pokemon_v2_pokedex: {name: {_eq: "paldea"}}}}) {
-    //           name
-    //           id
-    //         }
-    //       }
-    //       `
-    //     })
-    //   })
-    //   .then((res) => res.json())
-    //   .then((result) => { 
-    //     // console.log(result) 
-    //     this.pokemon = result.data.pokemon
-    //   })
-    //   // this.pokemon = species.results
-    // },
     async getPokemonByName(query) {
       const poke = await P.getPokemonByName(query)
       this.selectedPokemon = poke
@@ -288,6 +202,7 @@ export const usePokedexStore = defineStore('pokedex', {
       return ability_details
     },
     async setSelectedPokemon(name) {
+      console.log('setting pokemon', name)
       this.loaded = false
       const poke = await P.getPokemonByName(name)
       // console.log('setting poke', poke, name)
@@ -379,7 +294,7 @@ export const usePokedexStore = defineStore('pokedex', {
     },
     async getOffensiveSuperEffectiveTypes(type) {
       // Get type info from API
-      const damageInfo = await P.getTypeByName(type)
+      const damageInfo = this.getTypeByName(type)
 
       // Set type info
       this.selectedPokemonDamageRelations.offense = damageInfo.damage_relations.double_damage_from
@@ -418,69 +333,71 @@ export const usePokedexStore = defineStore('pokedex', {
 
       this.selectedPokemonMoveset = movesWithTypes
     },
+    getTypeByName(name) {
+      return this.types.find((t) => t.name === name)
+    },
     async getDefenseSuperEffectiveTypes(types) {
       console.log('getting superfective types for', types)
       let superEffective
 
-      // const typePromiseArray = await Lazy(types)
-      //   .map(async (type) => {
-      //     return await P.getTypeByName(type.type.name)
-      //   })
-      //   .toArray()
+      // Get types array from state with data
+      const typesWithData = await types.map((t) => this.getTypeByName(t.type.name))
 
-      types.each((type) => {
-        console.log('type', type)
+      console.log('typeswithdata', typesWithData)
 
-        // Get basic info: what does this type do half + no damage to?
-        const no_damage_to = Lazy(type)
-          .pluck('damage_relations')
-          .pluck('no_damage_to')
-          .flatten()
-          .uniq('name')
-          .toArray()
+      // const type = this.types.find((type) => type.name === t.type.name)
+      // console.log('type', type)
 
-        const half_damage_to = Lazy(type)
-          .pluck('damage_relations')
-          .pluck('half_damage_to')
-          .flatten()
-          .uniq('name')
-          .toArray()
+      // Get basic info: what does this type do half + no damage to?
+      const no_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('no_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
 
-        // Now, check for double typing conflicts:
-        // If this type does double damage to a type that's resisted by
-        // the other type, that's not good defensive typing
-        const double_damage_to = Lazy(type)
-          .pluck('damage_relations')
-          .pluck('double_damage_to')
-          .flatten()
-          .uniq('name')
-          .toArray()
+      const half_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('half_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
 
-        // console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
+      // Now, check for double typing conflicts:
+      // If this type does double damage to a type that's resisted by
+      // the other type, that's not good defensive typing
+      const double_damage_to = Lazy(typesWithData)
+        .pluck('damage_relations')
+        .pluck('double_damage_to')
+        .flatten()
+        .uniq('name')
+        .toArray()
 
-        superEffective = Lazy(half_damage_to)
-          .concat(no_damage_to)
-          .uniq('name')
-          .reject((val) => {
-            const isOverlapped = Lazy(double_damage_to).findWhere({ name: val.name })
-            return isOverlapped != undefined 
-          })
-          .toArray()
-        
-        // console.log(this.types, superEffective)
-        const neutral = Lazy(this.types)
-          .reject((type) => {
-            return superEffective.find((t) => t.name === type.name) != undefined
-          })
-          .reject((type) => {
-            return double_damage_to.find((t) => t.name === type.name) != undefined
-          })
-          .toArray()
+      console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
 
-        // console.log('neutral', neutral)
-        this.selectedPokemonDamageRelations.defense.neutral = neutral
-        this.selectedPokemonDamageRelations.defense.resist = superEffective
-      })
+      superEffective = Lazy(half_damage_to)
+        .concat(no_damage_to)
+        .uniq('name')
+        .reject((val) => {
+          const isOverlapped = Lazy(double_damage_to).findWhere({ name: val.name })
+          return isOverlapped != undefined 
+        })
+        .toArray()
+      
+      console.log(this.types, superEffective)
+      const neutral = Lazy(this.types)
+        .reject((type) => {
+          return superEffective.find((t) => t.name === type.name) != undefined
+        })
+        .reject((type) => {
+          return double_damage_to.find((t) => t.name === type.name) != undefined
+        })
+        .toArray()
+
+      console.log('neutral', neutral)
+      console.log('resist', superEffective)
+      this.selectedPokemonDamageRelations.defense.neutral = neutral
+      this.selectedPokemonDamageRelations.defense.resist = superEffective
     },
     async getNeutralDefensiveTyping(types) {
 
