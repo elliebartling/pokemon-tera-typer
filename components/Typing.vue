@@ -1,34 +1,48 @@
 <template>
     <div id="typing" class="card">
-        <h2 class="title">Typing</h2>
+        <h2 class="title">Strategy</h2>
+        <hr class="mt-4 -left-2 relative" />
+        <div class="damage-class">
+            <p class="">🏰 Defense:</p>
+            <span class="damage-class-pill">
+                <img v-if="pokedex.pokemonPrimaryAttackVector != 'either'" :src="`/icons/${pokedex.pokemonPrimaryAttackVector}.png`" />{{ pokedex.pokemonPrimaryAttackVector }}
+            </span>
+        </div>
+        <div class="damage-class">
+            <p class="">⚔️ Offense:</p>
+            <span class="damage-class-pill">
+                <img v-if="pokedex.pokemonPrimaryDefenseVector != 'either'" :src="`/icons/${pokedex.pokemonPrimaryDefenseVector}.png`" />{{ pokedex.pokemonPrimaryDefenseVector }}
+            </span>
+        </div>
+        <hr class="mt-2 -left-2 relative" />
         <div id="type-chart" class="type-chart-outer">
             <div class="header defense w-full">
                 <div class="row">
-                    <label>🏰 Defense vs.</label>
+                    <label>🏰 Def vs.</label>
                     <Type 
                         v-if="pokedex.selectedPokemon" 
                         v-for="type in pokedex.selectedPokemon.types"
-                        class="mr-2 mb-2"
+                        class="mb-2"
                         :type="type.type.name" 
                     />
                 </div>
                 <div class="row table-header">
-                    <div class="">Super Resist</div>
-                    <div class="">Neutral Resist</div>
+                    <div class="">Resist</div>
+                    <div class="">Neutral</div>
                 </div>
             </div>
-            <div class="header offense w-64">
+            <div class="header offense">
                 <div class="row">
-                    <label>⚔️ Offense vs.</label>
+                    <label>⚔️ Off vs.</label>
                     <Type 
                         v-if="pokedex.selectedTeraType" 
-                        class="mr-2 mb-2"
+                        class="mb-2"
                         :type="pokedex.selectedTeraType.name" 
                     />
                 </div>
                 <div class="row table-header">
-                    <div class="">Neutral</div>
-                    <div class="">Super</div>
+                    <div class="">Neutral vs.</div>
+                    <div class="">Super Eff.</div>
                 </div>
             </div>
             <table class="type-chart-inner">
@@ -61,26 +75,63 @@
             </table>
         </div>
         <div class="beware">
-            <p>Don't use: </p>
-            <Type 
-                v-for="type in pokedex.typeChart.quadrants.quad5"
-                class="mr-2 mb-2"
-                :type="type.name" 
-            />
+            <p class="pre-wrap">Don't use: </p>
+            <div class="flex flex-row flex-wrap">
+                <Type 
+                    v-for="type in pokedex.typeChart.quadrants.quad5"
+                    class="mr-2 mb-2"
+                    :type="type.name" 
+                />
+            </div>
         </div>
     </div>
 </template>
 <script setup>
+import { onMounted } from 'vue';
 import { usePokedexStore } from '../stores/pokedex'
 const pokedex = usePokedexStore()
+
+const adjustHeight = function() {
+    // Get the height of the type chart and assign the width of the offense header
+    // to match the height of the type chart
+    const typeChart = document.querySelector('.type-chart-inner')
+    const offenseHeader = document.querySelector('.header.offense')
+    const offenseHeaderHeight = typeChart?.offsetHeight
+    offenseHeader.style.width = `${offenseHeaderHeight}px`
+}
+
+onMounted(() => {
+    adjustHeight()
+    window.addEventListener('resize', adjustHeight)
+})
+
+const quads = computed(() => pokedex.typeChart.quadrants)
+
+watch(quads, (current, old) => {
+    console.log('quadrants changed', current, old)
+    nextTick(() => {
+        adjustHeight()
+    })
+}, { deep: true })
 </script>
 <style scoped>
+#typing { @apply pr-2; }
 #type-chart {
-    @apply w-full relative h-80 pl-14;
+    @apply w-full relative pl-14 mt-4;
+}
+
+.damage-class {
+    @apply flex flex-row justify-between items-center gap-x-2 mt-2;
+    @apply text-xs font-medium mr-4 text-gray-300 font-mono;
+}
+.damage-class-pill {
+    @apply font-mono rounded-md text-white text-xs inline-flex flex-row bg-slate-700 px-2 py-1;
+    img { @apply w-6 mr-2;}
 }
 .header { 
     @apply text-sm text-gray-500 font-mono; 
     @apply flex flex-col justify-center items-center gap-x-1;
+    @apply bg-slate-800 rounded-t-md pt-2;
 }
 
 .header .row { @apply flex flex-row justify-center items-baseline gap-x-1 w-full; }
@@ -91,8 +142,11 @@ const pokedex = usePokedexStore()
 }
 
 .header.offense {
-    @apply -rotate-90 -left-2 absolute top-80;
-    transform-origin: top left;
+    @apply w-80;
+    @apply -rotate-90 absolute;
+    transform-origin: bottom left;
+    /* top: calc(100% + 72px); */
+    bottom: 0;
 }
 
 .header.offense .row.row.table-header {
@@ -101,13 +155,13 @@ const pokedex = usePokedexStore()
 
 .type-chart-inner {
     @apply w-full text-white text-xs font-mono;
-    tr { @apply h-32; }
+    tr { @apply h-36; }
     td { @apply border border-gray-700 w-1/2 p-2 align-top; }
 }
 
 .beware {
     @apply text-xs text-gray-500 font-mono;
-    @apply flex flex-row justify-start items-baseline gap-x-1;
+    @apply flex flex-col md:flex-row justify-start items-baseline gap-x-1 gap-y-2;
     @apply pt-8;
 }
 </style>

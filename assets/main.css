@@ -17,3 +17,7 @@ html {
 .title {
     @apply text-2xl font-bold text-white;
 }
+
+hr {
+    @apply border border-slate-800;
+}
