@@ -1,6 +1,20 @@
 <template>
     <div id="typing" class="card">
-        <h2 class="title">Typing</h2>
+        <h2 class="title">Strategy</h2>
+        <hr class="mt-4 -left-2 relative" />
+        <div class="damage-class">
+            <p class="">🏰 Defense:</p>
+            <span class="damage-class-pill">
+                <img v-if="pokedex.pokemonPrimaryAttackVector != 'either'" :src="`/icons/${pokedex.pokemonPrimaryAttackVector}.png`" />{{ pokedex.pokemonPrimaryAttackVector }}
+            </span>
+        </div>
+        <div class="damage-class">
+            <p class="">⚔️ Offense:</p>
+            <span class="damage-class-pill">
+                <img v-if="pokedex.pokemonPrimaryDefenseVector != 'either'" :src="`/icons/${pokedex.pokemonPrimaryDefenseVector}.png`" />{{ pokedex.pokemonPrimaryDefenseVector }}
+            </span>
+        </div>
+        <hr class="mt-2 -left-2 relative" />
         <div id="type-chart" class="type-chart-outer">
             <div class="header defense w-full">
                 <div class="row">
@@ -85,14 +99,34 @@ const adjustHeight = function() {
     const offenseHeaderHeight = typeChart?.offsetHeight
     offenseHeader.style.width = `${offenseHeaderHeight}px`
 }
+
 onMounted(() => {
     adjustHeight()
     window.addEventListener('resize', adjustHeight)
 })
+
+const quads = computed(() => pokedex.typeChart.quadrants)
+
+watch(quads, (current, old) => {
+    console.log('quadrants changed', current, old)
+    nextTick(() => {
+        adjustHeight()
+    })
+}, { deep: true })
 </script>
 <style scoped>
+#typing { @apply pr-2; }
 #type-chart {
     @apply w-full relative pl-14 mt-4;
+}
+
+.damage-class {
+    @apply flex flex-row justify-between items-center gap-x-2 mt-2;
+    @apply text-xs font-medium mr-4 text-gray-300 font-mono;
+}
+.damage-class-pill {
+    @apply font-mono rounded-md text-white text-xs inline-flex flex-row bg-slate-700 px-2 py-1;
+    img { @apply w-6 mr-2;}
 }
 .header { 
     @apply text-sm text-gray-500 font-mono; 
