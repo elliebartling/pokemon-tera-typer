@@ -43,6 +43,7 @@ export default {
     @apply text-xs text-white font-mono rounded-md bg-gray-800 px-2 py-2 block;
     /* @apply w-full; */
     @apply w-44 shrink-0 snap-start;
+    @apply md:w-64;
 }
 .ability-name {
     @apply font-bold font-sans text-sm;

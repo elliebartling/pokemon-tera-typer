@@ -7,6 +7,7 @@ import TeraPicker from './TeraPicker.vue'
 import Type from './Type.vue'
 import MadeBy from './MadeBy.vue'
 import Ability from './Ability.vue'
+import Moveset from './Moveset.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 const pokedex = usePokedexStore()
@@ -22,13 +23,15 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
 </script>
 
 <template>
-    <div class="relative md:sticky md:top-12 transition-all">
+    <div class="relative transition-all">
+        <StarLevelPicker class="card mt-6 mb-4" />
+        <TeraPicker class="card mt-2 pb-0" />
         <div id="pokemon" class="card flex flex-col mt-12">
             <div class="flex flex-row">
                 <div class="relative flex flex-col order-0 w-1/3 pr-4">
                     <img 
                         v-if="pokedex.loaded"
-                        :src="pokedex.selectedPokemon.sprites.other['official-artwork'].front_default"
+                        :src="pokedex.selectedPokemon?.sprites.other['official-artwork'].front_default"
                         alt=""
                         sizes="(min-width: 1024px) 32rem, 20rem"
                         class="image"
@@ -57,15 +60,27 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
             </div>
             <Chart v-if="pokedex.loaded && !smAndLarger" class="w-full" />
             <!-- <hr class="mt-6 border-1 border-gray-500 mb-4" /> -->
-            <p class="text-white font-sans font-bold mb-2 mt-6">Abilities:</p>
+            <!-- <p class="text-white font-sans font-bold mb-2 mt-6">Abilities:</p> -->
             <div id="abilities">
                 <Ability v-for="ability in pokedex.selectedPokemon.abilities" :ability="ability" />
                 <div class="blank w-44 block shrink-0 snap-start h-2"></div>
             </div>
             <!-- <hr class="mt-6 border-1 border-gray-500" /> -->
-            <StarLevelPicker class="mt-6 mb-4" />
-            <TeraPicker class="mt-2" />
         </div>
+        <Moveset class="mt-4" />
+        <!-- <div v-if="pokedex.loaded" id="all-moves" class="card px-8 mt-4">
+            <h2 class="text-2xl font-bold text-white mb-2">{{capitalize(pokedex.selectedPokemon.name)}}'s moveset</h2>
+            <div class="flex flex-col items-start mt-3">
+            <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap">By level</p>
+            <MoveList :list="pokedex.selectedPokemonMoveset['level-up']" :showLevel="true" />
+
+            <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">Egg Moves</p>
+            <MoveList :list="pokedex.selectedPokemonMoveset['egg']" :showLevel="false" />
+            
+            <p class="text-sm font-medium mb-3 mr-4 text-gray-300 font-mono inline-block w-64 flex-shrink-0 whitespace-nowrap mt-6">By TM</p>
+            <MoveList :list="pokedex.selectedPokemonMoveset['machine']" :showLevel="false" />
+            </div>
+        </div> -->
         <MadeBy class="hidden md:flex" />
     </div>
 </template>
@@ -82,10 +97,12 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
 
 #abilities {
     @apply flex flex-row justify-start items-start;
-    @apply overflow-x-scroll;
+    @apply overflow-x-scroll overflow-visible;
     @apply gap-y-2 gap-x-2;
-    @apply mt-0;
+    @apply mt-4;
     @apply snap-x;
+    @apply -ml-6 px-6 -mr-6;
+    @apply scroll-p-4;
 }
 
 

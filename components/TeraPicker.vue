@@ -2,16 +2,11 @@
     <div id="tera-type-picker">
         <label class="label inline-block">Tera Type:</label>
         <div class="tera-type-picker">
-          <div v-for="type in pokedex.types" :key="type.name">
-            <button 
-              @click="pokedex.setTeraType(type)" 
+          <div v-for="pokeType in pokedex.types" :key="pokeType.name">
+            <button @click="pokedex.setTeraType(pokeType)" 
               class="tera-type"
-              :class="[
-                pokedex.selectedTeraType.name === type.name ? 
-                'tera-type-selected' : 'ring-purple-500/20', 
-                `bg-${type.color}`
-            ]">
-              <img class="w-8" :src="`/icons/${type.name}.png`" />
+              :class="[ pokedex.selectedTeraType.name === pokeType.name ? 'tera-type-selected' : 'ring-purple-500/20', `bg-${pokeType.color}`]">
+              <img class="w-8" :src="`/icons/${pokeType.name}.png`" />
             </button>
           </div>
         </div>
@@ -26,8 +21,12 @@ const pokedex = usePokedexStore()
     @apply text-white;
 }
 .tera-type-picker {
-    @apply flex flex-row gap-4 md:grid md:grid-cols-7 md:grid-rows-3;
-    @apply overflow-x-scroll py-4 px-2;
+    @apply flex flex-row gap-4;
+    /* @apply md:grid md:grid-cols-7 md:grid-rows-3; */
+    @apply overflow-x-scroll pt-4 px-2;
+    @apply snap-x snap-mandatory;
+    @apply scroll-px-6;
+    @apply -ml-6 px-6 -mr-6;
 }
 .tera-type {
     @apply w-12 h-12;
@@ -35,6 +34,7 @@ const pokedex = usePokedexStore()
     @apply rounded-full;
     @apply opacity-70;
     @apply ring-offset-gray-900;
+    @apply snap-start;
 }
 
 .tera-type img {
