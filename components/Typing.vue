@@ -15,7 +15,7 @@
             </span>
         </div>
         <hr class="mt-2 -left-2 relative" />
-        <div id="type-chart" class="type-chart-outer">
+        <div v-if="pokedex.loaded" id="type-chart" class="type-chart-outer">
             <div class="header defense w-full">
                 <div class="row">
                     <label>🏰 Def vs.</label>
@@ -49,25 +49,25 @@
                 <tr class="offense-super">
                     <td>
                         <Type 
-                            v-for="type in pokedex.typeChart.quadrants.quad1"
+                            v-for="type in pokedex.typeChart?.quadrants.quad1"
                             class="mr-2 mb-2"
                             :type="type.name" 
                         />
                     </td>
                     <td><Type 
-                            v-for="type in pokedex.typeChart.quadrants.quad2"
+                            v-for="type in pokedex.typeChart?.quadrants.quad2"
                             class="mr-2 mb-2"
                             :type="type.name" 
                         /></td>
                 </tr>
                 <tr class="offense-neutral">
                     <td><Type 
-                            v-for="type in pokedex.typeChart.quadrants.quad3"
+                            v-for="type in pokedex.typeChart?.quadrants.quad3"
                             class="mr-2 mb-2"
                             :type="type.name" 
                         /></td>
                     <td><Type 
-                            v-for="type in pokedex.typeChart.quadrants.quad4"
+                            v-for="type in pokedex.typeChart?.quadrants.quad4"
                             class="mr-2 mb-2"
                             :type="type.name" 
                         /></td>
@@ -78,7 +78,7 @@
             <p class="pre-wrap">Don't use: </p>
             <div class="flex flex-row flex-wrap">
                 <Type 
-                    v-for="type in pokedex.typeChart.quadrants.quad5"
+                    v-for="type in pokedex.typeChart?.quadrants.quad5"
                     class="mr-2 mb-2"
                     :type="type.name" 
                 />
@@ -96,8 +96,8 @@ const adjustHeight = function() {
     // to match the height of the type chart
     const typeChart = document.querySelector('.type-chart-inner')
     const offenseHeader = document.querySelector('.header.offense')
-    const offenseHeaderHeight = typeChart?.offsetHeight
-    offenseHeader.style.width = `${offenseHeaderHeight}px`
+    const offenseHeaderHeight = typeChart != null ? typeChart.offsetHeight : 0
+    if (offenseHeader) { offenseHeader.style.width = `${offenseHeaderHeight}px` }
 }
 
 onMounted(() => {
@@ -105,7 +105,7 @@ onMounted(() => {
     window.addEventListener('resize', adjustHeight)
 })
 
-const quads = computed(() => pokedex.typeChart.quadrants)
+const quads = computed(() => pokedex.loaded ? pokedex.typeChart.quadrants : null)
 
 watch(quads, (current, old) => {
     console.log('quadrants changed', current, old)

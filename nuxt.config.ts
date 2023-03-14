@@ -6,7 +6,8 @@ export default defineNuxtConfig({
         'nuxt-lodash',
         '@pinia/nuxt',
         '@nuxtjs/apollo',
-        'nuxt-graphql-server'
+        'nuxt-graphql-server',
+        '@vueuse/nuxt'
         // 'nuxt-headlessui'
     ],
     css: ['@/assets/main.css'],

@@ -147,7 +147,27 @@ export const usePokedexStore = defineStore('pokedex', {
       return watchOutMoves
     },
     typeChart() {
+      let quadrants = {
+        quad1: [],
+        quad2: [],
+        quad3: [],
+        quad4: [],
+        quad5: []
+      }
       if (!this.loaded) return null
+      // if (!this.selectedTeraType || !this.selectedPokemon || !this.loaded) {
+      //   return {
+      //     defense: {
+      //       super: [],
+      //       neutral: []
+      //     },
+      //     offense: {
+      //       super: [],
+      //       neutral: []
+      //     },
+      //     quadrants
+      //   }
+      // }
 
       // ----------------------------------------
       // Get player offensive data
@@ -216,14 +236,6 @@ export const usePokedexStore = defineStore('pokedex', {
           return isInList(type.name, superResistTypes) || isInList(type.name, double_damage_to)
         })
         .toArray()
-      
-      let quadrants = {
-        quad1: [],
-        quad2: [],
-        quad3: [],
-        quad4: [],
-        quad5: []
-      }
 
       console.log('resistTypes', superResistTypes, 'neutralTypes', neutralResistTypes)
       Lazy(this.types)
