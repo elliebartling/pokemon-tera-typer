@@ -75,10 +75,10 @@
             </table>
         </div>
         <div class="beware">
-            <p class="pre-wrap">Don't use: </p>
+            <p class="pre-wrap">Defensive liabilities: </p>
             <div class="flex flex-row flex-wrap">
                 <Type 
-                    v-for="type in pokedex.typeChart?.quadrants.quad5"
+                    v-for="type in pokedex.typeChart?.defense.weak"
                     class="mr-2 mb-2"
                     :type="type.name" 
                 />

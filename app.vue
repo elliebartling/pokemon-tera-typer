@@ -13,6 +13,7 @@
           </div>
           <div v-if="pokedex && pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
             <Typing />
+            <Recommendation />
           </div>
         </div>
        <MadeBy class="block md:hidden" />
