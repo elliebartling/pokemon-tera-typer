@@ -5,9 +5,118 @@ import voca from 'voca'
 import Pokedex from 'pokedex-promise-v2';
 const P = new Pokedex();
 
+
 function isInList(name, list) {
   return Lazy(list).find((n) => { return n.name === name })
 }
+
+const defenseLoweringMoves = [
+  'acid',
+  'crunch',
+  'crush-claw',
+  'fire-lash',
+  'grav-apple',
+  'iron-tail',
+  'leer',
+  'liquidation',
+  'max-phantasm',
+  'obstruct',
+  'octolock',
+  'razor-shell',
+  'rock-smash',
+  'screech',
+  'secret-power',
+  'shadow-bone',
+  'shadow-down',
+  'spicy-extract',
+  'tail-whip',
+  'thunderous-kick',
+  'tickle',
+  'triple-arrows'
+]
+
+const specialDefenseLoweringMoves = [
+  'acid',
+  'acid-spray',
+  'apple-acid',
+  'bug-buzz',
+  'crunch',
+  'earth-power',
+  'energy-ball',
+  'fake-tears',
+  'flash-cannon',
+  'focus-blast',
+  'lumina-crash',
+  'luster-purge',
+  'max-darkness',
+  'metal-sound',
+  'octolock',
+  'psychic',
+  'seed-flare',
+  'shadow-ball'
+]
+
+const attackRaisingMoves = [
+  'acupressure',
+  'ancient-power',
+  'belly-drum',
+  'bulk-up',
+  'clangorous-soul',
+  'clangorous-soulblaze',
+  'coil',
+  'dragon-dance',
+  'extreme-evoboost',
+  'fell-stinger',
+  'fillet-away',
+  'growth',
+  'hone-claws',
+  'howl',
+  'max-knuckle',
+  'max-wyrmwind',
+  'meditate',
+  'metal-claw',
+  'meteor-mash',
+  'no-retreat',
+  'ominous-wind',
+  'order-up',
+  'power-up-punch',
+  'rage',
+  'sharpen',
+  'shell-smash',
+  'shift-gear',
+  'silver-wind',
+  'swords-dance',
+  'tidy-up',
+  'vicotry-dance',
+  'work-up'
+]
+
+const specialAttackRaisingMoves = [
+  'acupressure',
+  'ancient-power',
+  'calm-mind',
+  'charge-beam',
+  'clangorous-soul',
+  'clangorous-soulblaze',
+  'extreme-evoboost',
+  'fiery-dance',
+  'fillet-away',
+  'geomancy',
+  'growth',
+  'max-ooze',
+  'meteor-beam',
+  'mystical-power',
+  'nasty-plot',
+  'no-retreat',
+  'ominous-wind',
+  'quiver-dance',
+  'shell-smash',
+  'silver-wind',
+  'tail-glow',
+  'take-heart',
+  'torch-song',
+  'work-up'
+]
 
 export const usePokedexStore = defineStore('pokedex', {
   state: () => ({ 
@@ -40,6 +149,7 @@ export const usePokedexStore = defineStore('pokedex', {
     loaded: false,
     showPalette: false,
     selectedTeraType: false,
+    recommendedPokemon: []
   }),
   getters: {
     filteredPokemon() {
@@ -152,7 +262,8 @@ export const usePokedexStore = defineStore('pokedex', {
         quad2: [],
         quad3: [],
         quad4: [],
-        quad5: []
+        quad5: [],
+        quad6: []
       }
       if (!this.loaded) return null
       // if (!this.selectedTeraType || !this.selectedPokemon || !this.loaded) {
@@ -251,6 +362,7 @@ export const usePokedexStore = defineStore('pokedex', {
             quadrants.quad3.push(type)
           } else if (isInList(type.name, neutralEffectiveTypes) && isInList(type.name, neutralResistTypes)) {
             quadrants.quad4.push(type)
+          // Quad 5: any effective, weak resisted
           } else {
             quadrants.quad5.push(type)
           }
@@ -259,7 +371,8 @@ export const usePokedexStore = defineStore('pokedex', {
       return {
         defense: {
           super: superResistTypes,
-          neutral: neutralResistTypes
+          neutral: neutralResistTypes,
+          weak: double_damage_to
         },
         offense: {
           super: superEffectiveTypes,
@@ -346,62 +459,6 @@ export const usePokedexStore = defineStore('pokedex', {
       
       this.addToRecent(poke)
       this.loaded = true
-
-      // console.log('getting pokemon')
-      // const pokemon = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     query: `query samplePokeAPIquery {
-      //       pokemon_v2_pokemon(where: {name: {_eq: "meowscarada"}}) {
-      //         id
-      //         name
-      //         abilities: pokemon_v2_pokemonabilities {
-      //           data: pokemon_v2_ability {
-      //             name
-      //           }
-      //         }
-      //         moves: pokemon_v2_pokemonmoves {
-      //           level
-      //           pokemon_v2_move {
-      //             name
-      //             power
-      //             type_id
-      //             damage_class: pokemon_v2_movedamageclass {
-      //               name
-      //             }
-      //           }
-      //         }
-      //         stats:pokemon_v2_pokemonstats {
-      //           base_stat
-      //         }
-      //         types: pokemon_v2_pokemontypes {
-      //           data: pokemon_v2_type {
-      //             name
-      //           }
-      //         }
-      //       }
-      //     }`
-      //   })
-      // })
-      // // .catch((err) => {console.log(err)})
-      // .then((res) => res.json())
-      // .then((result) => {
-      //   console.log('init formattng', result.data)
-      //   let poke = result.data.pokemon_v2_pokemon[0]
-
-      //   poke.types = poke.types.map((t) => { return t.name })
-
-      //   console.log(poke)
-
-      //   return poke
-      // })
-
-      // return pokemon
-      // console.log('got poke?',pokemon)
-  
     },
     setNewQuery(query) {
       this.query = query
@@ -469,7 +526,7 @@ export const usePokedexStore = defineStore('pokedex', {
       // Get types array from state with data
       const typesWithData = await types.map((t) => this.getTypeByName(t.type.name))
 
-      console.log('typeswithdata', typesWithData)
+      // console.log('typeswithdata', typesWithData)
 
       // const type = this.types.find((type) => type.name === t.type.name)
       // console.log('type', type)
@@ -548,6 +605,91 @@ export const usePokedexStore = defineStore('pokedex', {
         .toArray()
       
       // console.log(this.recentPokemon)
+    },
+    async getListOfRecommendedPokemon() {
+      console.log('getting recommended pokemon')
+
+      const whichQuad = this.typeChart?.quadrants.quad1.length > 0 ? 'quad1' : 'quad2'
+
+      const typesList = Lazy(this.typeChart?.quadrants[whichQuad])
+        // .concat(this.typeChart?.quadrants.quad2)
+        // .concat(this.typeChart?.quadrants.quad3)
+        .pluck('name')
+        .toArray()
+      
+      const pokemonList = Lazy(typesList)
+        .map((t) => this.types.find((tl) => tl.name == t))
+        .pluck('pokemon')
+        .flatten()
+        .uniq()
+        .reject((p) => { 
+          // Remove any pokemon that aren't available in Paldea
+          return this.pokemon.find((pl) => pl.name === p) == undefined
+        })
+        .toArray()
+
+      console.log('pokemonList', pokemonList)
+      
+      const recs = await Promise.all(pokemonList.map(async (p) => {
+        return await P.getPokemonByName(p)
+      }))
+
+      // console.log('recs', recs)
+
+      // Remove any pokemon with a type that's weak to the selected pokemon type chart
+      const filteredRecs = Lazy(recs)
+        .reject((p) => {
+          const isWeak = Lazy(p.types).findWhere((t) => {
+              return this.typeChart.defense.weak.find((w) => w.name === t.type.name) != undefined
+          })
+          return isWeak != undefined
+        })
+        .map((p) => {
+          // Check if pokemon has access to moves that are defense lowering
+          const hasDefenseLoweringMoves = Lazy(p.moves)
+            .findWhere((m) => {
+              return defenseLoweringMoves.find((d) => d === m.move.name) != undefined
+            })
+          const hasSpecialDefenseLoweringMoves = Lazy(p.moves)
+            .findWhere((m) => {
+              return specialDefenseLoweringMoves.find((d) => d === m.move.name) != undefined
+            })
+          
+          // Check if pokemon has access to moves that are defense lowering
+          const hasAttackRaisingMoves = Lazy(p.moves)
+            .findWhere((m) => {
+              return attackRaisingMoves.find((d) => d === m.move.name) != undefined
+            })
+          const hasSpecialAttackRaisingMoves = Lazy(p.moves)
+            .findWhere((m) => {
+              return specialAttackRaisingMoves.find((d) => d === m.move.name) != undefined
+            })
+
+          p.defenseLoweringMoves = hasDefenseLoweringMoves
+          P.specialDefenseLoweringMoves = hasSpecialDefenseLoweringMoves
+          P.attackRaisingMoves = hasAttackRaisingMoves 
+          p.specialAttackRaisingMoves = hasSpecialAttackRaisingMoves
+          return p
+        })
+        .filter((p) => {
+          // Remove any pokemon whose total stats are less than 200
+          return p.stats.reduce((a, b) => a + b.base_stat, 0) > 500
+        })
+        .sortBy((p) => p.hasAttackRaisingMoves || p.hasDefenseLoweringMoves)
+        .sortBy((p) => p.base_experience)
+        .toArray()
+
+      this.recommendedPokemon = filteredRecs
+    },
+    // Get a specific list of pokemon based on type
+    async getRecommendedPokemon(type) {
+      const pokemonList = this.types.find((t) => t.name === type)
+      // console.log('pokemon list', pokemonList.pokemon)
+      const recommendedPokemon = await Promise.all(pokemonList.pokemon.map(async (p) => {
+        const poke = await P.getPokemonByName(p)
+        return poke
+      }))
+      return recommendedPokemon
     }
   }
 })

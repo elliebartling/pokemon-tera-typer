@@ -14,11 +14,11 @@ export default defineNuxtConfig({
     apollo: {
         clients: {
             default: {
-            httpEndpoint: 'https://api.spacex.land/graphql'
+                httpEndpoint: 'https://beta.pokeapi.co/graphql/v1beta'
             }
         },
     },
-    graphqlServer: {
-        url: '/api/graphql',
-    },
+    // graphqlServer: {
+    //     url: '/api/graphql',
+    // },
 })

@@ -3,6 +3,7 @@ import typeColors from '../../data/typeColors.json'
 const P = new Pokedex();
 
 export default eventHandler(async (event) => {    
+    // const query = getQuery(event)
 
     // Get all the types, and only return the data we need
     const { results } = await P.getTypesList()
@@ -14,7 +15,8 @@ export default eventHandler(async (event) => {
                     damage_relations: t.damage_relations,
                     id: t.id,
                     name: t.name,
-                    color: typeColors[t.name] 
+                    color: typeColors[t.name],
+                    pokemon: t.pokemon.map(p => p.pokemon.name)
                 }
             })
         )
