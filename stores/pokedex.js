@@ -646,29 +646,30 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .map((p) => {
           // Check if pokemon has access to moves that are defense lowering
-          const hasDefenseLoweringMoves = Lazy(p.moves)
-            .findWhere((m) => {
-              return defenseLoweringMoves.find((d) => d === m.move.name) != undefined
-            })
-          const hasSpecialDefenseLoweringMoves = Lazy(p.moves)
-            .findWhere((m) => {
-              return specialDefenseLoweringMoves.find((d) => d === m.move.name) != undefined
-            })
+          const hasDefenseLoweringMoves = Lazy(p.moves).filter((m) => {
+            return defenseLoweringMoves.find((d) => d === m.move.name) != undefined
+          }).pluck('move').toArray()
+          const hasSpecialDefenseLoweringMoves = Lazy(p.moves).filter((m) => {
+            return specialDefenseLoweringMoves.find((d) => d === m.move.name) != undefined
+          }).pluck('move').toArray()
           
           // Check if pokemon has access to moves that are defense lowering
-          const hasAttackRaisingMoves = Lazy(p.moves)
-            .findWhere((m) => {
-              return attackRaisingMoves.find((d) => d === m.move.name) != undefined
-            })
-          const hasSpecialAttackRaisingMoves = Lazy(p.moves)
-            .findWhere((m) => {
-              return specialAttackRaisingMoves.find((d) => d === m.move.name) != undefined
-            })
+          const hasAttackRaisingMoves = Lazy(p.moves).filter((m) => {
+            return attackRaisingMoves.find((d) => d === m.move.name) != undefined
+          }).pluck('move').toArray()
+          const hasSpecialAttackRaisingMoves = Lazy(p.moves).filter((m) => {
+            return specialAttackRaisingMoves.find((d) => d === m.move.name) != undefined
+          }).pluck('move').toArray()
 
-          p.defenseLoweringMoves = hasDefenseLoweringMoves
-          P.specialDefenseLoweringMoves = hasSpecialDefenseLoweringMoves
-          P.attackRaisingMoves = hasAttackRaisingMoves 
-          p.specialAttackRaisingMoves = hasSpecialAttackRaisingMoves
+          let specialMoves = {
+            defenseLowering: hasDefenseLoweringMoves,
+            specialDefenseLowering: hasSpecialDefenseLoweringMoves,
+            attackRaising: hasAttackRaisingMoves,
+            specialAttackRaising: hasSpecialAttackRaisingMoves
+          }
+
+          p.specialMoves = specialMoves
+
           return p
         })
         .filter((p) => {
