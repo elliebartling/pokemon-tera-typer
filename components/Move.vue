@@ -32,9 +32,9 @@ export default {
 }
 </script>
 <template>
-    <div class="bg-slate-800 rounded-lg px-4 pt-4 pb-2 text-white font-mono text-xs w-full border-collapse mb-2 grid grid-cols-8 items-start">
-        <div class="flex flex-col md:flex-row items-baseline content-between col-span-4">
-            <div class="pt-1 flex-shrink-0 w-full sm:w-28 xl:w-44 rounded-l-lg flex flex-row flex-wrap items-baseline gap-2">
+    <div class="move row">
+        <div class="wrapper col-span-2">
+            <div class="move-data">
                 <div v-if="showLevel" class="text-indigo-400 text-xxs order-2 md:order-0">Lv {{ move.level_learned_at }}</div>
                 <div class="font-mono text-xs font-bold">{{ deslug(move.name) }}</div>
             </div>
@@ -43,17 +43,27 @@ export default {
         <div class="col-span-2">
             <Thing :move="move" />
         </div>
-        <div v-if="filteredTypes.length > 0 && move.damage_class != 'status'" class="rounded-r-lg">
-            <span class="block whitespace-nowrap mb-2 mt-1 md:hidden">2x vs.</span>
-            <Type v-for="type in filteredTypes" :type="type" class="mr-2 mb-2" />
+        <div v-if="filteredTypes.length > 0 && move.damage_class != 'status'" class="rounded-r-lg flex flex-row flex-wrap flex-grow col-span-3">
+            <!-- <span class="block whitespace-nowrap mb-2 mt-1 md:hidden">2x vs.</span> -->
+            <Type v-for="pokemonType in filteredTypes" :type="pokemonType" class="mr-2 mb-2" />
         </div>
     </div>
 </template>
 
 <style scoped>
+.move { @apply bg-slate-800 rounded-lg px-4 pt-4 pb-2 text-white font-mono text-xs w-full border-collapse mb-2 grid grid-cols-8 items-start;}
+.wrapper { 
+    @apply flex flex-col; 
+    @apply md:flex-row;
+    @apply items-baseline content-between;
+}
+
+.move-data {
+    @apply pt-1 flex-shrink-0 w-full sm:w-36 rounded-l-lg flex flex-row flex-wrap items-baseline gap-2;
+}
 .row {
     display: grid;
-    grid-template-columns: 3fr repeat(3, 1fr);
+    grid-template-columns: 2fr repeat(6, 1fr);
     grid-template-rows: 1fr;
     grid-column-gap: 8px;
     grid-row-gap: 0px;

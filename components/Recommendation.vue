@@ -6,16 +6,15 @@
                 <thead>
                     <tr>
                         <th scope="col">Pokemon</th>
-                        <th v-if="smAndLarger" scope="col">Type</th>
+                        <th scope="col">Type</th>
                         <th scope="col">Stats</th>
                         <th scope="col">⬆️ Stat Increase</th>
                         <th scope="col">⬇️ Stat Decrease</th>
-                        <!-- <th scope="col">Defense type</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="pokemon in pokedex.recommendedPokemon" :key="pokemon.id">
-                        <td>
+                        <td class="first">
                             <div class="poke">
                                 <img :src="pokemon.sprites.other['official-artwork'].front_default" />
                                 <div class="wrapper">
@@ -29,23 +28,15 @@
                                 </div>
                             </div>
                         </td>
-                        <td v-if="smAndLarger">
+                        <td class="second-type">
                             <div class="types">
                                 <Type v-for="pokeType in pokemon.types" :type="pokeType.type.name" />
                             </div>
                         </td>
-                        <td>
+                        <td class="third-stats">
                             <div class="stats">
                                 <Chart :pokemon="pokemon" :show="[1,2,3,4]" />
                             </div>
-                            <!-- <div class="tag">
-                                {{ getPokemonAttackType(pokemon) }}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tag">
-                                {{ getPokemonDefenseType(pokemon) }}
-                            </div> -->
                         </td>
                         <td class="buff-moves buff-increase">
                             <div  class="moves text-orange-400" v-if="pokemon.specialMoves.attackRaising.length > 0 && (getPokemonAttackType(pokemon) == 'Physical' || getPokemonAttackType(pokemon) == 'Mixed')">
@@ -78,11 +69,6 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="w-full">
-            <h2 class="title mt-6 mb-2">But watch out for...</h2>
-            <p class="text-xs font-mono text-gray-400 mb-4">{{ capitalize(pokedex.selectedPokemon.name) }}'s got a few tricks up its sleeve — watch out for these non-STAB supereffective coverage moves.</p>
-            <MoveList :list="pokedex.watchOutMoves" />
         </div>
     </div>
 </template>

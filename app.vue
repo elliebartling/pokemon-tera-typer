@@ -2,21 +2,27 @@
   <div id="app" v-if="pokedex" class="container mx-auto">
     <div class="wrapper mt-4 sm:mt-16 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
-      <div class="wrapper px-8 md:w-2/5">
-          <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
-          </h1>
-          <!-- <p class="text-xl text-white/80 mt-4 font-medium">Not sure how to prep for your next Tera Raid? Input the Raid's info below to get recommendations & heads ups.</p> -->
-        </div>
       <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12 mt-8">
         <div class="xl:order-first lg:row-span-2 px-2 md:px-8">
+          <div class="wrapper py-8">
+            <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+              Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
+            </h1>
+          </div>
           <Header />
         </div>
-        <div v-if="pokedex && pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-4 md:mb-16 gap-4">
+        <div v-if="pokedex && pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col md:mb-10 gap-4">
           <Typing />
+          <div class="card -mb-12">
+            <div class="w-full -mb-8">
+                <h2 class="title mb-2">But watch out for...</h2>
+                <p class="text-xs font-mono text-gray-400 mb-4">{{ capitalize(pokedex.selectedPokemon.name) }}'s got a few tricks up its sleeve — watch out for these non-STAB supereffective coverage moves.</p>
+                <MoveList :list="pokedex.watchOutMoves" :filter-effective-by="pokedex.offensiveTypes" />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="px-2 md:px-8 md:mt-4">
+      <div class="px-2 md:px-8">
         <Recommendation />
       </div>
       <MadeBy class="block" />

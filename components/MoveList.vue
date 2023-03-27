@@ -11,11 +11,11 @@ const props = defineProps({
 <template>
     <div class="bg-black bg-opacity-20 rounded-xl w-full px-4 md:px-4 pb-3 -ml-6 relative" style="width: calc(100% + 3rem)">
         <div class="flex flex-col w-full">
-          <div class="flex flex-row w-full text-white font-mono text-xs px-4 py-4 rounded-t-lg">
-            <div class="w-1/3">Name</div>
-            <div class="w-1/6">Type</div>
-            <div class="w-20">Damage</div>
-            <div class="hidden md:block">2x vs.</div>
+          <div class="row text-white font-mono text-xs px-4 py-4 rounded-t-lg">
+            <div class="col-span-2 md:col-span-1">Name</div>
+            <div class="col-span-1 hidden md:block">Type</div>
+            <div class="col-span-2">Damage</div>
+            <div class="col-span-2 hidden md:block">2x vs.</div>
           </div>
           <Move 
             v-for="move in list"
@@ -28,3 +28,12 @@ const props = defineProps({
       </div>
 
 </template>
+<style scoped>
+.row {
+    display: grid;
+    grid-template-columns: 2fr repeat(6, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 8px;
+    grid-row-gap: 0px;
+}
+</style>

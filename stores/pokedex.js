@@ -255,8 +255,18 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
+      console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
+    },
+    offensiveTypes() {
+      if (!this.loaded || !this.selectedPokemon) return null
+      return Lazy(this.typeChart.quadrants.quad1)
+        .concat(this.typeChart.quadrants.quad2)
+        .concat(this.typeChart.quadrants.quad3)
+        .concat(this.typeChart.quadrants.quad4)
+        .pluck('name')
+        .flatten()
+        .toArray()
     },
     typeChart() {
       let quadrants = {
@@ -610,13 +620,14 @@ export const usePokedexStore = defineStore('pokedex', {
     },
     async getListOfRecommendedPokemon() {
       // console.log('getting recommended pokemon')
+      if (this.typeChart == undefined) { return null }
 
       const whichQuad = this.typeChart?.quadrants.quad1.length > 0 ? 'quad1' : 'quad2'
 
-      const typesList = Lazy(this.typeChart?.quadrants['quad1'])
+      const typesList = Lazy(this.typeChart?.quadrants.quad1)
         .concat(this.typeChart?.quadrants.quad2)
-        .concat(this.typeChart?.quadrants.quad3)
-        .concat(this.typeChart?.quadrants.quad4)
+        // .concat(this.typeChart?.quadrants.quad3)
+        // .concat(this.typeChart?.quadrants.quad4)
         .pluck('name')
         .toArray()
       
