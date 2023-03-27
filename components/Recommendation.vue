@@ -138,6 +138,8 @@ function getPokemonDefenseType(pokemon) {
     .tag { @apply text-xs inline-block px-1.5 py-1 bg-gray-800 rounded-md mt-0.5 sm:mt-0; }
     .name { @apply font-sans font-bold text-lg; }
 
+    td { vertical-align: top; }
+
     thead th { @apply px-3 py-3.5 text-left text-gray-400 pl-0; }
     tbody { @apply divide-y divide-gray-700; }
     tbody td { @apply whitespace-nowrap py-4 pr-3 font-mono text-sm; }

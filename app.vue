@@ -1,22 +1,25 @@
 <template>
   <div id="app" v-if="pokedex" class="container mx-auto">
-    <div class="wrapper mt-0 sm:mt-32 sm:px-6">
+    <div class="wrapper mt-4 sm:mt-16 sm:px-6">
       <PickerPalette v-if="pokedex.showPalette" />
-      <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12">
-          <div class="xl:order-first lg:row-span-2 px-2 mt-8 md:px-8">
-            <div class="wrapper px-4">
-              <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
-              </h1>
-            </div>
-            <Header />
-          </div>
-          <div v-if="pokedex && pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-80 gap-4">
-            <Typing />
-            <Recommendation />
-          </div>
+      <div class="wrapper px-8 md:w-2/5">
+          <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+            Not sure how to prep for your next Tera Raid? Let Tera Typer help 🔮
+          </h1>
+          <!-- <p class="text-xl text-white/80 mt-4 font-medium">Not sure how to prep for your next Tera Raid? Input the Raid's info below to get recommendations & heads ups.</p> -->
         </div>
-       <MadeBy class="block md:hidden" />
+      <div class="grid grid-cols-1 gap-y-4 xl:grid-cols-2 xl:grid-rows-[auto_1fr] xl:gap-y-12 mt-8">
+        <div class="xl:order-first lg:row-span-2 px-2 md:px-8">
+          <Header />
+        </div>
+        <div v-if="pokedex && pokedex.loaded" id="col-2" class="md:px-8 px-2 wrapper flex flex-col mb-4 md:mb-16 gap-4">
+          <Typing />
+        </div>
+      </div>
+      <div class="px-2 md:px-8 md:mt-4">
+        <Recommendation />
+      </div>
+      <MadeBy class="block" />
     </div>
   </div>
 </template>

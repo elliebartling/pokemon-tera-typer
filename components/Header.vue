@@ -22,7 +22,7 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
 
 <template>
     <div class="relative transition-all">
-        <StarLevelPicker class="card mt-6 mb-4" />
+        <StarLevelPicker class="card mb-4" />
         <TeraPicker class="card mt-2 pb-0" />
         <div id="pokemon" class="card flex flex-col mt-12">
             <div class="flex flex-row">
@@ -81,7 +81,6 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
             <MoveList :list="pokedex.selectedPokemonMoveset['machine']" :showLevel="false" />
             </div>
         </div> -->
-        <MadeBy class="hidden md:flex" />
     </div>
 </template>
 

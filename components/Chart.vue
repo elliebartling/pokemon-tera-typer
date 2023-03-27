@@ -7,7 +7,7 @@
 </script>
 
 <template>
-    <div id="chart" class="chart w-full">
+    <div id="chart" class="chart w-full text-xs">
         <template v-for="(stat, index) in pokemon.stats" :key="index">
             <div v-if="show.includes(index)" class="flex flex-row items-center font-mono w-full" :id="`stat-${index}`">
                 <span class="stat mr-2 text-white w-10">{{ labels[index] }}</span>
