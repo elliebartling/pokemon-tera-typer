@@ -9,7 +9,8 @@ export default eventHandler(async (event) => {
         'walking-wake',
         'iron-leaves',
         'greninja',
-        'delibird'
+        'delibird',
+        'samurott'
     ]
 
     let pokemon = await P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')

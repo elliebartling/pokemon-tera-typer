@@ -9,6 +9,7 @@
                         <th v-if="smAndLarger" scope="col">Type</th>
                         <th scope="col">Buff Access</th>
                         <th scope="col">Attack type</th>
+                        <th scope="col">Defense type</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,15 +30,28 @@
                                 <Type v-for="pokeType in pokemon.types" :type="pokeType.type.name" />
                             </div>
                         </td>
-                        <td>
-                            <!-- <span v-for="move in pokemon.specialMoves.attackRaising">{{ move.name }}</span>
-                            <span v-for="move in pokemon.specialMoves.specialAttackRaising">{{ move.name }}</span>
-                            <span v-for="move in pokemon.specialMoves.defenseLowering">{{ move.name }}</span>
-                            <span v-for="move in pokemon.specialMoves.specialDefenseLowering">{{ move.name }}</span> -->
+                        <td id="buff-moves">
+                            <div v-if="getPokemonAttackType(pokemon) == 'Physical' || getPokemonAttackType(pokemon) == 'Mixed'">
+                                <span v-for="move in pokemon.specialMoves.attackRaising">{{ capitalize(move.name) }}</span>
+                            </div>
+                            <div v-if="getPokemonAttackType(pokemon) == 'Special' || getPokemonAttackType(pokemon) == 'Mixed'">
+                                <span v-for="move in pokemon.specialMoves.specialAttackRaising">{{ capitalize(move.name) }}</span>
+                            </div>
+                            <div>
+                                <span v-for="move in pokemon.specialMoves.defenseLowering">{{ capitalize(move.name) }}</span>
+                            </div>
+                            <div>
+                                <span v-for="move in pokemon.specialMoves.specialDefenseLowering">{{ capitalize(move.name) }}</span>
+                            </div>
                         </td>
                         <td>
                             <div class="tag">
-                            Physical Attacker
+                            {{ getPokemonAttackType(pokemon) }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tag">
+                            {{ getPokemonDefenseType(pokemon) }}
                             </div>
                         </td>
                     </tr>
@@ -68,6 +82,14 @@ watch(typeChart, () => {
   pokedex.getListOfRecommendedPokemon()
 })
 
+function getPokemonAttackType(pokemon) {
+    if (pokemon.ATKType > 20) { return 'Physical' } else if (pokemon.ATKType < -20) { return 'Special' } else { return 'Mixed' }
+}
+
+function getPokemonDefenseType(pokemon) {
+    if (pokemon.DEFType > 20) { return 'Physical' } else if (pokemon.DEFType < -20) { return 'Special' } else { return 'Mixed' }
+}
+
 </script>
 <style scoped>
 .list {
@@ -84,6 +106,8 @@ watch(typeChart, () => {
     td .poke img { @apply w-10 h-10;}
     td .types { @apply flex flex-row gap-2 items-center; }
     td .wrapper { @apply text-gray-300 flex flex-col gap-y-1; }
+
+    #buff-moves span { @apply mr-1 inline-block px-1 py-0.5 mb-1 rounded bg-zinc-700 text-xs; }
     /* @apply flex flex-col gap-3 text-white mt-4; */
     .list-item { @apply grid grid-cols-3 items-center justify-center gap-x-4;}
     /* div { @apply flex flex-row gap-2 items-center; } */
