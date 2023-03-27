@@ -230,7 +230,7 @@ export const usePokedexStore = defineStore('pokedex', {
       const selectedPokemonTypes = Lazy(this.selectedPokemon.types)
         .map((t, i) => { 
           return t && t.type ? t.type.name : null 
-        })
+        }).toArray()
       
       this.selectedPokemonWatchoutMoveTypes = selectedPokemonTypes
       
@@ -243,19 +243,19 @@ export const usePokedexStore = defineStore('pokedex', {
         .flatten()
         .reject({ damage_class: 'status' })
         .filter((m) => { return m.power > 50 })
-        // .filter((m) => { return m.damage_class === this.pokemonPrimaryAttackVector })
         .filter((m) => { 
           const { super_effective } = m
-          const recommendedTypes = Lazy(this.resistedOverlappedTyping)
-            .concat(this.neutralOverlappedTyping)
+          const recommendedTypes = Lazy(this.typeChart.defense.neutral)
+            .concat(this.typeChart.defense.super)
+            .pluck('name')
             // .map((t) => { return t.name })
             .toArray()
-
+          console.log('super_effective', super_effective, recommendedTypes)
           return super_effective.some( r => recommendedTypes.includes(r) )
         })
         .toArray()
 
-      // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
+      console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
     },
     typeChart() {

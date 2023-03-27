@@ -1,13 +1,13 @@
 <template>
     <div class="card">
         <h2 class="title">Recommendations</h2>
-        <div class="w-ful overflow-x-scroll">
+        <div class="w-full overflow-x-scroll">
             <table class="list">
                 <thead>
                     <tr>
                         <th scope="col">Pokemon</th>
                         <th v-if="smAndLarger" scope="col">Type</th>
-                        <th scope="col">Buff Access</th>
+                        <th scope="col">Buff Moves</th>
                         <th scope="col">Attack type</th>
                         <th scope="col">Defense type</th>
                     </tr>
@@ -31,32 +31,41 @@
                             </div>
                         </td>
                         <td id="buff-moves">
-                            <div v-if="getPokemonAttackType(pokemon) == 'Physical' || getPokemonAttackType(pokemon) == 'Mixed'">
+                            <div  class="group text-xs text-indigo-400 flex items-baseline gap-x-1" v-if="getPokemonAttackType(pokemon) == 'Physical' || getPokemonAttackType(pokemon) == 'Mixed'">
+                                ATK ⬆️
                                 <span v-for="move in pokemon.specialMoves.attackRaising">{{ capitalize(move.name) }}</span>
                             </div>
-                            <div v-if="getPokemonAttackType(pokemon) == 'Special' || getPokemonAttackType(pokemon) == 'Mixed'">
+                            <div  class="group text-xs text-indigo-400 flex items-baseline gap-x-1" v-if="getPokemonAttackType(pokemon) == 'Special' || getPokemonAttackType(pokemon) == 'Mixed'">
+                                SPA ⬆️
                                 <span v-for="move in pokemon.specialMoves.specialAttackRaising">{{ capitalize(move.name) }}</span>
                             </div>
-                            <div>
+                            <div class="group text-xs text-rose-400 flex items-baseline gap-x-1" v-if="pokemon.specialMoves.defenseLowering.length > 0 && (getPokemonAttackType(pokemon) == 'Physical' || getPokemonAttackType(pokemon) == 'Mixed')">
+                                DEF ⬇️
                                 <span v-for="move in pokemon.specialMoves.defenseLowering">{{ capitalize(move.name) }}</span>
                             </div>
-                            <div>
+                            <div class="group text-xs text-rose-400 flex items-baseline gap-x-1" v-if="pokemon.specialMoves.specialDefenseLowering.length > 0 && (getPokemonAttackType(pokemon) == 'Special' || getPokemonAttackType(pokemon) == 'Mixed')">
+                                SPD ⬇️
                                 <span v-for="move in pokemon.specialMoves.specialDefenseLowering">{{ capitalize(move.name) }}</span>
                             </div>
                         </td>
                         <td>
                             <div class="tag">
-                            {{ getPokemonAttackType(pokemon) }}
+                                {{ getPokemonAttackType(pokemon) }}
                             </div>
                         </td>
                         <td>
                             <div class="tag">
-                            {{ getPokemonDefenseType(pokemon) }}
+                                {{ getPokemonDefenseType(pokemon) }}
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="w-full">
+            <h2 class="title mt-6 mb-2">But watch out for...</h2>
+            <p class="text-xs font-mono text-gray-400 mb-4">{{ capitalize(pokedex.selectedPokemon.name) }}'s got a few tricks up its sleeve — watch out for these non-STAB supereffective coverage moves.</p>
+            <MoveList :list="pokedex.watchOutMoves" />
         </div>
     </div>
 </template>
@@ -65,6 +74,7 @@ import { usePokedexStore } from '../stores/pokedex'
 import { storeToRefs } from 'pinia'
 import { capitalize } from '~~/helpers/capitalize'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import MoveList from './MoveList.vue'
 import Type from './Type.vue'
 const pokedex = usePokedexStore()
 pokedex.getListOfRecommendedPokemon()
@@ -107,7 +117,7 @@ function getPokemonDefenseType(pokemon) {
     td .types { @apply flex flex-row gap-2 items-center; }
     td .wrapper { @apply text-gray-300 flex flex-col gap-y-1; }
 
-    #buff-moves span { @apply mr-1 inline-block px-1 py-0.5 mb-1 rounded bg-zinc-700 text-xs; }
+    #buff-moves span { @apply text-gray-300 inline-block px-1 py-0.5 mb-1 rounded bg-zinc-700 text-xs; }
     /* @apply flex flex-col gap-3 text-white mt-4; */
     .list-item { @apply grid grid-cols-3 items-center justify-center gap-x-4;}
     /* div { @apply flex flex-row gap-2 items-center; } */
