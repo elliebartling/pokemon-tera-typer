@@ -8,6 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@nuxt/image-edge": "^1.0.0-27991759.1a5eea1",
     "@nuxtjs/apollo": "^5.0.0-alpha.5",
     "nuxt": "^3.2.3"
   },
@@ -16,7 +17,6 @@
     "@as-integrations/h3": "^1.1.5",
     "@headlessui/vue": "^1.7.10",
     "@heroicons/vue": "^2.0.16",
-    "@nuxt/image": "^0.7.1",
     "@nuxtjs/composition-api": "^0.33.1",
     "@nuxtjs/tailwindcss": "^6.4.1",
     "@pinia/nuxt": "^0.4.7",

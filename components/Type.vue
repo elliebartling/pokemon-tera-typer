@@ -1,5 +1,5 @@
 <template lang="">
-    <div class="px-2 py-1 font-mono text-xs rounded-md inline-block text-white" :class="`bg-${pokedex.getColorByType(type)}`">
+    <div class="px-1.5 py-1 font-mono text-xs rounded-md inline-block text-white" :class="`bg-${pokedex.getColorByType(type)}`">
         {{ type }}
     </div>
 </template>

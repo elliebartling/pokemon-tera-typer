@@ -18,8 +18,6 @@ const capitalize = function(text) {
 const breakpoints = useBreakpoints(breakpointsTailwind)
 
 const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
-
-
 </script>
 
 <template>
@@ -55,10 +53,12 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
                             />
                         </div>
                     </div>
-                    <Chart v-if="pokedex.loaded && smAndLarger" class="w-full" />
+                    <Chart v-if="pokedex.loaded" class="w-full" :pokemon="pokedex.selectedPokemon" :show="[0,1,2,3,4,5]" />
                 </div>
             </div>
-            <Chart v-if="pokedex.loaded && !smAndLarger" class="w-full" />
+            <div>
+                <Chart v-if="pokedex.loaded && !smAndLarger" class="w-full" :pokemon="pokedex.selectedPokemon" :show="[0,1,2,3,4,5]" />
+            </div>
             <!-- <hr class="mt-6 border-1 border-gray-500 mb-4" /> -->
             <!-- <p class="text-white font-sans font-bold mb-2 mt-6">Abilities:</p> -->
             <div id="abilities">
@@ -67,7 +67,7 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
             </div>
             <!-- <hr class="mt-6 border-1 border-gray-500" /> -->
         </div>
-        <Moveset class="mt-4" />
+        <!-- <Moveset class="mt-4" /> -->
         <!-- <div v-if="pokedex.loaded" id="all-moves" class="card px-8 mt-4">
             <h2 class="text-2xl font-bold text-white mb-2">{{capitalize(pokedex.selectedPokemon.name)}}'s moveset</h2>
             <div class="flex flex-col items-start mt-3">
@@ -129,4 +129,6 @@ const smAndLarger = breakpoints.greaterOrEqual('sm') // sm and larger
 .reset-button .tooltip {
     @apply absolute w-44 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700;
 }
+
+#pokemon .chart .bar { @apply h-1.5; }
 </style>

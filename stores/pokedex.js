@@ -187,7 +187,7 @@ export const usePokedexStore = defineStore('pokedex', {
       const DEF = this.selectedPokemon.stats[2].base_stat
       const SPD = this.selectedPokemon.stats[4].base_stat
       const difference = DEF - SPD
-      if (difference < -20) { return 'special' } else if (difference > 20) { return 'physical' } else { return 'mixed' }
+      if (difference < -20) { return 'special' } else if (difference > 20) { return 'physical' } else { return 'either' }
     },
     allOverlappedTyping() {
       if (!this.loaded || !this.selectedPokemon.stats) return null
@@ -242,7 +242,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .omit(selectedPokemonTypes)
         .flatten()
         .reject({ damage_class: 'status' })
-        .filter((m) => { return m.power > 50 })
+        .filter((m) => { return m.power > 70 })
         .filter((m) => { 
           const { super_effective } = m
           const recommendedTypes = Lazy(this.typeChart.defense.neutral)
@@ -250,12 +250,12 @@ export const usePokedexStore = defineStore('pokedex', {
             .pluck('name')
             // .map((t) => { return t.name })
             .toArray()
-          console.log('super_effective', super_effective, recommendedTypes)
+          // console.log('super_effective', super_effective, recommendedTypes)
           return super_effective.some( r => recommendedTypes.includes(r) )
         })
         .toArray()
 
-      console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
+      // console.log('watchoutmoves', watchOutMoves, selectedPokemonTypes)
       return watchOutMoves
     },
     typeChart() {
@@ -337,7 +337,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .uniq('name')
         .toArray()
       
-      console.log('double_damage_to', double_damage_to)
+      // console.log('double_damage_to', double_damage_to)
       // Join half and no damage to arrays
       const superResistTypes = Lazy(half_damage_to)
         .concat(no_damage_to)
@@ -350,7 +350,7 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      console.log('resistTypes', superResistTypes, 'neutralTypes', neutralResistTypes)
+      // console.log('resistTypes', superResistTypes, 'neutralTypes', neutralResistTypes)
       Lazy(this.types)
         .each((type) => {
           // Quad 1: super effective, super resisted
@@ -402,7 +402,7 @@ export const usePokedexStore = defineStore('pokedex', {
       // this.loaded = true
     },
     setNewPokemon() {
-      console.log('set new poke')
+      // console.log('set new poke')
       // this.loaded = false
 
       if (this.filteredPokemon.length === 1) {
@@ -443,7 +443,7 @@ export const usePokedexStore = defineStore('pokedex', {
       return ability_details
     },
     async setSelectedPokemon(name) {
-      console.log('setting pokemon', name)
+      // console.log('setting pokemon', name)
       this.loaded = false
       const poke = await P.getPokemonByName(name)
       // console.log('setting poke', poke, name)
@@ -522,7 +522,7 @@ export const usePokedexStore = defineStore('pokedex', {
       return this.types.find((t) => t.name === name)
     },
     async getDefenseSuperEffectiveTypes(types) {
-      console.log('getting superfective types for', types)
+      // console.log('getting superfective types for', types)
       let superEffective
 
       // Get types array from state with data
@@ -558,7 +558,7 @@ export const usePokedexStore = defineStore('pokedex', {
         .uniq('name')
         .toArray()
 
-      console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
+      // console.log('double to', double_damage_to, 'half to', half_damage_to, 'no to', no_damage_to)
 
       superEffective = Lazy(half_damage_to)
         .concat(no_damage_to)
@@ -569,7 +569,7 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
       
-      console.log(this.types, superEffective)
+      // console.log(this.types, superEffective)
       const neutral = Lazy(this.types)
         .reject((type) => {
           return superEffective.find((t) => t.name === type.name) != undefined
@@ -579,8 +579,8 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      console.log('neutral', neutral)
-      console.log('resist', superEffective)
+      // console.log('neutral', neutral)
+      // console.log('resist', superEffective)
       this.selectedPokemonDamageRelations.defense.neutral = neutral
       this.selectedPokemonDamageRelations.defense.resist = superEffective
     },
@@ -609,13 +609,14 @@ export const usePokedexStore = defineStore('pokedex', {
       // console.log(this.recentPokemon)
     },
     async getListOfRecommendedPokemon() {
-      console.log('getting recommended pokemon')
+      // console.log('getting recommended pokemon')
 
       const whichQuad = this.typeChart?.quadrants.quad1.length > 0 ? 'quad1' : 'quad2'
 
-      const typesList = Lazy(this.typeChart?.quadrants[whichQuad])
-        // .concat(this.typeChart?.quadrants.quad2)
-        // .concat(this.typeChart?.quadrants.quad3)
+      const typesList = Lazy(this.typeChart?.quadrants['quad1'])
+        .concat(this.typeChart?.quadrants.quad2)
+        .concat(this.typeChart?.quadrants.quad3)
+        .concat(this.typeChart?.quadrants.quad4)
         .pluck('name')
         .toArray()
       
@@ -630,13 +631,11 @@ export const usePokedexStore = defineStore('pokedex', {
         })
         .toArray()
 
-      console.log('pokemonList', pokemonList)
+      // console.log('pokemonList', pokemonList)
       
       const recs = await Promise.all(pokemonList.map(async (p) => {
         return await P.getPokemonByName(p)
       }))
-
-      // console.log('recs', recs)
 
       // Remove any pokemon with a type that's weak to the selected pokemon type chart
       const filteredRecs = Lazy(recs)
@@ -682,11 +681,11 @@ export const usePokedexStore = defineStore('pokedex', {
           return p
         })
         .filter((p) => {
-          // Remove any pokemon whose total stats are less than 200
+          // Remove any pokemon whose total stats are less than 500
           return p.stats.reduce((a, b) => a + b.base_stat, 0) > 500
         })
-        .sortBy((p) => p.hasAttackRaisingMoves || p.hasDefenseLoweringMoves)
-        .sortBy((p) => p.base_experience)
+        // .sortBy((p) => p.hasAttackRaisingMoves || p.hasDefenseLoweringMoves)
+        // .sortBy((p) => p.base_experience)
         .toArray()
 
       this.recommendedPokemon = filteredRecs

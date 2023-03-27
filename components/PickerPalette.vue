@@ -117,7 +117,7 @@
     // };
 
   const getSpriteUrl = (pokemon) => {
-    console.log('trying to get dex number...', pokemon)
+    // console.log('trying to get dex number...', pokemon)
     const dexNumber = pokemon.id ? pokemon.id : pokemon.url.split('/').reverse()[1]
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexNumber}.png`
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
