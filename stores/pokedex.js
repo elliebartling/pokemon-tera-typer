@@ -178,14 +178,16 @@ export const usePokedexStore = defineStore('pokedex', {
       // Check if ATK > SPA
       const ATK = this.selectedPokemon.stats[1].base_stat
       const SPA = this.selectedPokemon.stats[3].base_stat
-      if (ATK > SPA) { return 'physical' } else if (ATK < SPA) { return 'special' } else { return 'either' }
+      const difference = ATK - SPA
+      if (difference > 20) { return 'physical' } else if (difference < -20) { return 'special' } else { return 'either' }
     },
     pokemonPrimaryDefenseVector() {
       if (!this.loaded || !this.selectedPokemon.stats) return null
       // Check if DEF < SPD
       const DEF = this.selectedPokemon.stats[2].base_stat
       const SPD = this.selectedPokemon.stats[4].base_stat
-      if (DEF > SPD) { return 'special' } else if (DEF < SPD) { return 'physical' } else { return 'either' }
+      const difference = DEF - SPD
+      if (difference < -20) { return 'special' } else if (difference > 20) { return 'physical' } else { return 'mixed' }
     },
     allOverlappedTyping() {
       if (!this.loaded || !this.selectedPokemon.stats) return null
@@ -669,6 +671,13 @@ export const usePokedexStore = defineStore('pokedex', {
           }
 
           p.specialMoves = specialMoves
+
+          const { stats } = p
+          const ATKType = stats[1].base_stat - stats[3].base_stat
+          const DEFType = stats[2].base_stat - stats[4].base_stat
+          
+          p.ATKType = ATKType
+          p.DEFType = DEFType
 
           return p
         })
