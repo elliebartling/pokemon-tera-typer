@@ -7,7 +7,9 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@nuxtjs/apollo',
         'nuxt-graphql-server',
-        '@vueuse/nuxt'
+        '@vueuse/nuxt',
+        // '@nuxt/image',
+        // '@nuxt/image-edge',
         // 'nuxt-headlessui'
     ],
     css: ['@/assets/main.css'],
@@ -18,6 +20,10 @@ export default defineNuxtConfig({
             }
         },
     },
+    // target: 'static',
+    // buildModules: [
+    //     '@nuxt/image-edge',
+    // ]
     // graphqlServer: {
     //     url: '/api/graphql',
     // },

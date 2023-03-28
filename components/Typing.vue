@@ -18,7 +18,7 @@
         <div v-if="pokedex.loaded" id="type-chart" class="type-chart-outer">
             <div class="header defense w-full">
                 <div class="row">
-                    <label>🏰 Def vs.</label>
+                    <label>🏰 vs.</label>
                     <Type 
                         v-if="pokedex.selectedPokemon" 
                         v-for="type in pokedex.selectedPokemon.types"
@@ -33,7 +33,7 @@
             </div>
             <div class="header offense">
                 <div class="row">
-                    <label>⚔️ Off vs.</label>
+                    <label>⚔️ vs.</label>
                     <Type 
                         v-if="pokedex.selectedTeraType" 
                         class="mb-2"
@@ -41,8 +41,8 @@
                     />
                 </div>
                 <div class="row table-header">
-                    <div class="">Neutral vs.</div>
-                    <div class="">Super Eff.</div>
+                    <div class="">1x vs.</div>
+                    <div class="">2x vs.</div>
                 </div>
             </div>
             <table class="type-chart-inner">
@@ -74,7 +74,7 @@
                 </tr>
             </table>
         </div>
-        <div class="beware">
+        <div class="beware -mb-4">
             <p class="pre-wrap">Defensive liabilities: </p>
             <div class="flex flex-row flex-wrap">
                 <Type 
@@ -155,7 +155,7 @@ watch(quads, (current, old) => {
 
 .type-chart-inner {
     @apply w-full text-white text-xs font-mono;
-    tr { @apply h-36; }
+    tr { @apply h-36 md:h-20; }
     td { @apply border border-gray-700 w-1/2 p-2 align-top; }
 }
 
