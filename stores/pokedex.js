@@ -626,8 +626,8 @@ export const usePokedexStore = defineStore('pokedex', {
 
       const typesList = Lazy(this.typeChart?.quadrants.quad1)
         .concat(this.typeChart?.quadrants.quad2)
-        // .concat(this.typeChart?.quadrants.quad3)
-        // .concat(this.typeChart?.quadrants.quad4)
+        .concat(this.typeChart?.quadrants.quad3)
+        .concat(this.typeChart?.quadrants.quad4)
         .pluck('name')
         .toArray()
       
