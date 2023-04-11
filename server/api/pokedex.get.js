@@ -1,4 +1,5 @@
 import Pokedex from 'pokedex-promise-v2';
+import paldea from '../../data/paldea.json';
 const P = new Pokedex();
 
 export default eventHandler(async (event) => {
@@ -6,19 +7,27 @@ export default eventHandler(async (event) => {
         'charizard',
         'cinderace',
         'decidueye',
-        'walking-wake',
-        'iron-leaves',
+        // 'walking-wake',
+        // 'iron-leaves',
         'greninja',
         'delibird',
-        'samurott'
+        'samurott',
+        'typhlosion'
     ]
 
-    let pokemon = await P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')
-        .then(res => res.pokemon_entries)
-        .then(res => res.map(pokemon => pokemon.pokemon_species))
+    // let pokemon = await P.getResource('https://pokeapi.co/api/v2/pokedex/paldea')
+    //     .then(res => res.pokemon_entries)
+    //     .then(res => res.map(pokemon => pokemon.pokemon_species))
+
+    let pokemon = paldea.data.pokemon
     
     const event_pokemon = await Promise.all(event_pokes.map(async poke => {
-        const data = await P.getPokemonByName(poke)
+        let data
+        try {
+            data = await P.getPokemonByName(poke)
+        } catch {
+            console.log('error', poke)
+        }
 
         return {
             name: poke,

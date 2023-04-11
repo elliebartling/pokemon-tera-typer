@@ -10,6 +10,7 @@
                         <th scope="col">Stats</th>
                         <th scope="col">⬆️ Stat Increase</th>
                         <th scope="col">⬇️ Stat Decrease</th>
+                        <th scope="col">Watchout for</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,6 +66,9 @@
                                     <span v-for="move in pokemon.specialMoves.specialDefenseLowering">{{ capitalize(move.name) }}</span>
                                 </div>
                             </div>
+                        </td>
+                        <td>
+                            {{ pokedex.getMovesSupereffectiveAgainstPoke(pokemon) }}
                         </td>
                     </tr>
                 </tbody>

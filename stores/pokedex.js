@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import Lazy from "lazy.js"
 // import _ from lodash
 import voca from 'voca'
-import Pokedex from 'pokedex-promise-v2';
+import Pokedex from 'pokedex-promise-v2'
 const P = new Pokedex();
 
 
@@ -596,6 +596,26 @@ export const usePokedexStore = defineStore('pokedex', {
     },
     async getNeutralDefensiveTyping(types) {
 
+    },
+    async getMovesSupereffectiveAgainstPoke(poke) {
+      // From all the watchout moves, get the ones that are super effective against the selected pokemon
+      const moves = await Promise.all(this.watchOutMoves)
+      const superEffective = await Promise.all(Lazy(moves)
+        .filter((move) => {
+          // Get the move type
+          const moveType = move.type.name
+          // Get the types of the selected pokemon
+          const pokeTypes = poke.types.map((t) => this.getTypeByName(t.type.name))
+          // console.log('movetype', moveType, 'poketypes', pokeTypes)
+          // Check if the move type is super effective against any of the pokemon types
+          return pokeTypes.find((t) => {
+            const superEffective = t.damage_relations.double_damage_from.find((t) => t.name === moveType)
+            return superEffective != undefined
+          }) != undefined
+          // return move.super_effective.find((t) => t === poke.types[0].type.name) != undefined
+        })
+        .toArray())
+      return superEffective
     },
     async getSuperEffectiveAgainst(type) {
       const typeInfo = await P.getTypeByName(type)
